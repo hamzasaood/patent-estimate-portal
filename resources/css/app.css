@@ -1,0 +1,37 @@
+@import url('https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css');
+
+// Brand tokens (replace with exact hex from the Emuna logo brand guide)
+:root {
+  --brand-primary: #0d2b5f;   /* update to client hex */
+  --brand-accent:  #e31b23;   /* update to client hex */
+  --brand-dark:    #0b1220;   /* update to client hex */
+}
+
+/* Global tweaks */
+body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif; }
+.navbar-brand img { height: 34px; }
+.btn-brand { background: var(--brand-primary); color:#fff; }
+.btn-brand:hover { filter: brightness(1.05); }
+.link-brand { color: var(--brand-primary); }
+.card-brand {
+    border: 1px solid var(--brand-primary);
+    box-shadow: 0 2px 8px rgba(13, 43, 95, 0.08);
+}
+
+.text-accent {
+    color: var(--brand-accent);
+}
+
+.bg-brand {
+    background-color: var(--brand-primary);
+    color: #fff;
+}
+
+.bg-accent {
+    background-color: var(--brand-accent);
+    color: #fff;
+}
+
+.border-brand {
+    border-color: var(--brand-primary) !important;
+}

@@ -1,0 +1,65 @@
+:root {
+  --brand-primary: #4F708E;   /* Main button + highlight */
+  --brand-accent:  #e31b23;   /* Accent color if needed */
+  --brand-dark:    #0b1220;   /* Dark for navbar/footer */
+  --brand-light:   #f3f6f8;   /* Light backgrounds */
+}
+
+/* --- BUTTONS --- */
+.btn-brand {
+  background: var(--brand-primary);
+  color: #fff !important;
+  border-radius: .5rem;
+  transition: 0.2s ease-in-out;
+}
+.btn-brand:hover {
+  background: #43627b; /* slightly darker */
+  color: #fff !important;
+}
+
+/* Outlined brand button */
+.btn-outline-brand {
+  border: 2px solid var(--brand-primary);
+  color: var(--brand-primary);
+  border-radius: .5rem;
+}
+.btn-outline-brand:hover {
+  background: var(--brand-primary);
+  color: #fff;
+}
+
+/* --- LINKS --- */
+.link-brand {
+  color: var(--brand-primary);
+  text-decoration: none;
+}
+.link-brand:hover {
+  color: #43627b;
+  text-decoration: underline;
+}
+
+/* --- CARDS --- */
+.card-brand {
+  border: 1px solid var(--brand-primary);
+  box-shadow: 0 2px 8px rgba(13, 43, 95, 0.08);
+  border-radius: .75rem;
+}
+
+/* --- SECTION HEADINGS --- */
+.section-title {
+  color: var(--brand-primary);
+  font-weight: 700;
+  margin-bottom: 2rem;
+}
+
+/* --- NAVBAR IMPROVEMENTS --- */
+.navbar-brand img {
+  height: 38px;
+}
+.navbar .nav-link {
+  font-weight: 500;
+  transition: color 0.2s;
+}
+.navbar .nav-link:hover {
+  color: var(--brand-primary) !important;
+}
