@@ -105,7 +105,7 @@
                 <input type="number" class="form-control" placeholder="e.g., 25">
               </div>
               <div class="col-12 d-grid">
-                <a href="{{ url('/quotes/create') }}" class="btn btn-brand">Continue to Full Form</a>
+                <a href="{{ url('/quick/quotes/create') }}" class="btn btn-brand">Continue to Full Form</a>
               </div>
             </form>
           </div>
@@ -206,7 +206,7 @@
   <div class="container" data-aos="zoom-in">
     <h2 class="fw-bold mb-3">Ready to Get Started?</h2>
     <p class="lead mb-4">Receive your patent estimate today and file with confidence.</p>
-    <a href="{{ url('/quotes/create') }}" class="btn btn-light btn-lg shadow-sm">
+    <a href="{{ url('/quick/quotes/create') }}" class="btn btn-light btn-lg shadow-sm">
       <i class="bi bi-arrow-right-circle"></i> Get Your Free Estimate
     </a>
   </div>

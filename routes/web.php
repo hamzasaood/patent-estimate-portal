@@ -1,6 +1,13 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\QuotesController;
+use App\Http\Controllers\Admin\PricingLogicController;
+
+use App\Http\Controllers\QuoteController;
+
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -23,14 +30,18 @@ Route::view('/resources', 'resources');
 Route::view('/contact', 'contact');
 
 Route::view('/quotes/create', 'quotes.create');
-Route::view('/admin/quotes', 'admin.quotes.index');
+//Route::view('/admin/quotes', 'admin.quotes.index');
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::middleware(['auth','admin'])->group(function () {
-    Route::view('/admin', 'admin.dashboard')->name('admin.dashboard');
-    Route::view('/admin/quotes', 'admin.quotes.index')->name('admin.quotes.index');
+Route::middleware(['auth','admin'])->prefix('admin')->group(function () {
+    Route::view('/dashboard', 'admin.dashboard')->name('admin.dashboard');
+    Route::get('dashboard/data', [QuotesController::class,'data'])->name('admin.dashboard.data');
+    Route::resource('quotes', QuotesController::class);
+
+    Route::resource('pricing', PricingLogicController::class);
+    Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
 });
 
 Route::get('/api/wipo/{appNo}', function($appNo){
@@ -39,9 +50,15 @@ Route::get('/api/wipo/{appNo}', function($appNo){
 });
 
 
-use App\Http\Controllers\QuoteController;
 
-Route::get('/quotes/create', [QuoteController::class, 'create'])->name('quotes.create');
-Route::post('/quotes', [QuoteController::class, 'store'])->name('quotes.store');
-Route::get('/quotes/{quote}', [QuoteController::class, 'show'])->name('quotes.show');
+Route::get('/quick/quotes/create', [QuoteController::class, 'create'])->name('quotes.create.quick');
+Route::post('/quick/quotes', [QuoteController::class, 'store'])->name('quotes.store.quick');
+Route::get('/quick/{quote}', [QuoteController::class, 'show'])->name('quotes.show.quick');
+
+Route::get('/quotes/{quote}/download', [App\Http\Controllers\QuoteController::class, 'download'])
+     ->name('quotes.download');
+
+
+// routes/web.php
+Route::get('/wipo/fetch/{application_number}', [App\Http\Controllers\WipoController::class, 'fetch']);
 

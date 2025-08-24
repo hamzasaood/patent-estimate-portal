@@ -12,6 +12,8 @@
 
   {{-- Custom branding CSS --}}
   <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
 
   <style>
     /* HEADER STYLING */
@@ -100,7 +102,7 @@
 
           {{-- Quotation CTA --}}
           <li class="nav-item ms-lg-3">
-            <a class="btn btn-sm btn-brand shadow-sm px-3" href="{{ url('/quotes/create') }}">
+            <a class="btn btn-sm btn-brand shadow-sm px-3" href="{{ url('/quick/quotes/create') }}">
               <i class="bi bi-calculator"></i> Get a Quotation
             </a>
           </li>
@@ -115,7 +117,13 @@
                 <li><a class="dropdown-item" href="{{ route('login') }}"><i class="bi bi-box-arrow-in-right me-2"></i> Login</a></li>
                 <li><a class="dropdown-item" href="{{ route('register') }}"><i class="bi bi-person-plus me-2"></i> Register</a></li>
               @else
+              @if(Auth::user()->role == 'admin')
+                <li><a class="dropdown-item" href="{{ url('admin/dashboard') }}"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a></li>
+              @else
                 <li><a class="dropdown-item" href="{{ url('/dashboard') }}"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a></li>
+                <li><a class="dropdown-item" href="{{ url('/profile') }}"><i class="bi bi-person me-2"></i> Profile</a></li>
+              @endif
+
                 <li>
                   <form method="POST" action="{{ route('logout') }}">
                     @csrf
@@ -133,7 +141,7 @@
   </nav>
 
   {{-- MAIN --}}
-  <main class="flex-grow-1">
+  <main class="flex-grow-1 py-4">
     @yield('content')
   </main>
 
@@ -185,7 +193,6 @@
   </footer>
 
   {{-- SCRIPTS --}}
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="{{ asset('js/app.js') }}"></script>
 

@@ -9,14 +9,15 @@ class Quote extends Model
 {
     use HasFactory;
     protected $fillable = [
-    'user_id','application_type','jurisdiction','application_number',
+    'user_id','firm_id','application_type','jurisdiction','application_number',
     'claims','pages','drawings','sequence_pages',
     'expedited','translation','priority',
     'title','applicant','priority_date','filing_date',
     'deadline_30m','deadline_31m','client_ref','emuna_ref',
     'fees_breakdown',
-    'base_fee','extra_fee','tax','total','status'
-];
+    'base_fee','extra_fee','tax','total',
+    'firm_logo','firm_fees','total_with_firm','is_white_label','status'
+    ];
 
 protected $casts = [
     'priority_date' => 'date',
