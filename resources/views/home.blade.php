@@ -10,11 +10,11 @@
 
     {{-- Slide 1 --}}
     <div class="carousel-item active" 
-         style="background: url('{{ asset('images/hero1.jpg') }}') center center/cover no-repeat; height: 85vh; position: relative;">
+         style="background: url('{{ asset('images/hero1.jpg') }}') center center/cover no-repeat; height: 100vh; position: relative;">
       <div class="overlay position-absolute top-0 start-0 w-100 h-100" style="background:rgba(11,18,32,0.6);"></div>
       <div class="d-flex h-100 align-items-center justify-content-center text-center text-white position-relative">
         <div data-aos="fade-up">
-          <h1 class="display-3 fw-bold">Patent Estimates Made Simple</h1>
+          <h1 class="display-3 fw-bold" style="color:#fff;">Foreign Filing Estimates Made Simple</h1>
           <p class="lead mb-4">Accurate cost projections for global filings in minutes.</p>
           <a href="{{ url('/quotes/create') }}" class="btn btn-brand btn-lg me-2">
             <i class="bi bi-calculator"></i> Get a Quotation
@@ -28,11 +28,11 @@
 
     {{-- Slide 2 --}}
     <div class="carousel-item" 
-         style="background: url('{{ asset('images/hero2.jpg') }}') center center/cover no-repeat; height: 85vh; position: relative;">
+         style="background: url('{{ asset('images/hero2.jpg') }}') center center/cover no-repeat; height: 100vh; position: relative;">
       <div class="overlay position-absolute top-0 start-0 w-100 h-100" style="background:rgba(79,112,142,0.55);"></div>
       <div class="d-flex h-100 align-items-center justify-content-center text-center text-white position-relative">
         <div data-aos="fade-down">
-          <h1 class="display-3 fw-bold">Trusted Worldwide</h1>
+          <h1 class="display-3 fw-bold" style="color:#fff;">Trusted Worldwide</h1>
           <p class="lead mb-4">Serving innovators and companies across multiple jurisdictions.</p>
           <a href="{{ url('/about') }}" class="btn btn-light btn-lg">
             Learn More
@@ -43,11 +43,11 @@
 
     {{-- Slide 3 --}}
     <div class="carousel-item" 
-         style="background: url('{{ asset('images/hero3.jpg') }}') center center/cover no-repeat; height: 85vh; position: relative;">
+         style="background: url('{{ asset('images/hero3.jpg') }}') center center/cover no-repeat; height: 100vh; position: relative;">
       <div class="overlay position-absolute top-0 start-0 w-100 h-100" style="background:rgba(0,0,0,0.55);"></div>
       <div class="d-flex h-100 align-items-center justify-content-center text-center text-white position-relative">
         <div data-aos="fade-right">
-          <h1 class="display-3 fw-bold">Innovation Meets Protection</h1>
+          <h1 class="display-3 fw-bold" style="color:#fff;">Innovation Meets Protection</h1>
           <p class="lead mb-4">Safeguard your ideas with transparent IP cost insights.</p>
           <a href="{{ url('/contact') }}" class="btn btn-brand btn-lg">
             Contact Us
@@ -73,9 +73,9 @@
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-lg-8">
-        <div class="card shadow-lg border-0" data-aos="zoom-in">
+        <div class="card shadow-lg border-0 rounded-4 p-4" data-aos="zoom-in">
           <div class="card-body p-4">
-            <h4 class="fw-bold mb-3 text-center" style="color:var(--brand-primary)">Quick Estimate</h4>
+            <h4 class="fw-bold mb-3 text-center text-primary">Quick Estimate</h4>
             <form class="row g-3">
               <div class="col-md-6">
                 <label class="form-label">Application Type</label>
@@ -175,31 +175,74 @@
 </section>
 
 {{-- TESTIMONIALS --}}
-<section class="py-5">
+<section class="py-5 bg-light">
   <div class="container text-center">
-    <h2 class="section-title" data-aos="fade-up">What Our Clients Say</h2>
-    <div class="row g-4">
-      <div class="col-md-4" data-aos="fade-right">
-        <div class="p-4 border rounded-3 shadow-sm h-100">
-          <p class="small text-muted">“Quick, accurate, and reliable estimates for our international filings.”</p>
-          <h6 class="fw-bold mt-3">— Startup Founder</h6>
+    <h2 class="section-title text-center mb-5 fw-bold" style="color:#4f708e;" data-aos="fade-up">
+      What Our Clients Say
+    </h2>
+
+    <div id="testimonialCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="5000">
+      <div class="carousel-inner">
+
+        {{-- Slide 1 --}}
+        <div class="carousel-item active">
+          <div class="row justify-content-center">
+            <div class="col-lg-8">
+              <div class="p-5 bg-white rounded-4 shadow-lg text-center border-top border-4" style="border-color:#4f708e;">
+                <i class="bi bi-quote fs-1 mb-3" style="color:#4f708e;"></i>
+                <p class="fst-italic text-muted fs-5">“Quick, accurate, and reliable estimates for our international filings.”</p>
+                <h6 class="fw-bold mt-3 text-dark">— Startup Founder</h6>
+              </div>
+            </div>
+          </div>
         </div>
+
+        {{-- Slide 2 --}}
+        <div class="carousel-item">
+          <div class="row justify-content-center">
+            <div class="col-lg-8">
+              <div class="p-5 bg-white rounded-4 shadow-lg text-center border-top border-4" style="border-color:#4f708e;">
+                <i class="bi bi-quote fs-1 mb-3" style="color:#4f708e;"></i>
+                <p class="fst-italic text-muted fs-5">“The transparency saved us time and budgeting headaches.”</p>
+                <h6 class="fw-bold mt-3 text-dark">— IP Manager</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {{-- Slide 3 --}}
+        <div class="carousel-item">
+          <div class="row justify-content-center">
+            <div class="col-lg-8">
+              <div class="p-5 bg-white rounded-4 shadow-lg text-center border-top border-4" style="border-color:#4f708e;">
+                <i class="bi bi-quote fs-1 mb-3" style="color:#4f708e;"></i>
+                <p class="fst-italic text-muted fs-5">“We could plan filings with confidence thanks to instant projections.”</p>
+                <h6 class="fw-bold mt-3 text-dark">— Legal Counsel</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
-      <div class="col-md-4" data-aos="fade-up">
-        <div class="p-4 border rounded-3 shadow-sm h-100">
-          <p class="small text-muted">“The transparency saved us time and budgeting headaches.”</p>
-          <h6 class="fw-bold mt-3">— IP Manager</h6>
-        </div>
-      </div>
-      <div class="col-md-4" data-aos="fade-left">
-        <div class="p-4 border rounded-3 shadow-sm h-100">
-          <p class="small text-muted">“We could plan filings with confidence thanks to instant projections.”</p>
-          <h6 class="fw-bold mt-3">— Legal Counsel</h6>
-        </div>
+
+      {{-- Controls --}}
+      <button class="carousel-control-prev" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" style="background-color:#4f708e; border-radius:50%; padding:15px;"></span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" style="background-color:#4f708e; border-radius:50%; padding:15px;"></span>
+      </button>
+
+      {{-- Indicators --}}
+      <div class="carousel-indicators mt-4">
+        <button type="button" data-bs-target="#testimonialCarousel" data-bs-slide-to="0" class="active bg-dark"></button>
+        <button type="button" data-bs-target="#testimonialCarousel" data-bs-slide-to="1" class="bg-dark"></button>
+        <button type="button" data-bs-target="#testimonialCarousel" data-bs-slide-to="2" class="bg-dark"></button>
       </div>
     </div>
   </div>
 </section>
+
 
 {{-- CTA SECTION --}}
 <section class="py-5 text-white text-center" style="background:var(--brand-primary)">

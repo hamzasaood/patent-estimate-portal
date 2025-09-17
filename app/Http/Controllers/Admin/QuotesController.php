@@ -14,7 +14,7 @@ class QuotesController extends Controller
     //
     public function index()
     {
-        $quotes = Quote::with('user')->latest()->paginate(10);
+        $quotes = Quote::with('user')->get();
         return view('admin.quotes.index', compact('quotes'));
     }
 

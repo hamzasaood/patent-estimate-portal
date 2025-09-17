@@ -1,51 +1,60 @@
 @extends('admin.layout.app')
 
 @section('content')
-<div class="container-fluid p-4">
-    <h3>Pricing Logic Rules</h3>
-    <a href="{{ route('pricing.create') }}" class="btn btn-primary mb-3">+ Add New Rule</a>
+<div class="container">
+    <div class="d-flex justify-content-between mb-3">
+        <h2>Pricing Logics</h2>
+        <a href="{{ route('pricing-logics.create') }}" class="btn btn-primary">+ Add New</a>
+    </div>
 
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
-    <table class="table table-striped">
-        <thead>
+    <table class="table table-bordered">
+        <thead class="table-dark">
             <tr>
-                <th>ID</th>
-                <th>Jurisdiction</th>
-                <th>Type</th>
-                <th>Base Fee</th>
-                <th>Tax %</th>
+                <th>Service</th>
+                <th>Region</th>
+                <th>Country</th>
+                
+                <th>Filing Fee</th>
+                <th>Translation Fee</th>
+                <th>Official Fee</th>
+                
                 <th>Status</th>
-                <th>Action</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
-            @foreach($rules as $rule)
-            <tr>
-                <td>{{ $rule->id }}</td>
-                <td>{{ $rule->jurisdiction }}</td>
-                <td>{{ $rule->application_type }}</td>
-                <td>{{ $rule->base_fee }}</td>
-                <td>{{ $rule->tax_percentage }}</td>
-                <td>
-                    <span class="badge bg-{{ $rule->status == 'active' ? 'success':'secondary' }}">
-                        {{ ucfirst($rule->status) }}
-                    </span>
-                </td>
-                <td>
-                    <a href="{{ route('pricing.edit',$rule->id) }}" class="btn btn-sm btn-info">Edit</a>
-                    <form action="{{ route('pricing.destroy',$rule->id) }}" method="POST" style="display:inline-block;">
-                        @csrf @method('DELETE')
-                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this rule?')">Delete</button>
-                    </form>
-                </td>
-            </tr>
+            @foreach($logics as $logic)
+                <tr>
+                    <td>{{ $logic->service }}</td>
+                    <td>{{ $logic->region }}</td>
+                    <td>{{ $logic->country }}</td>
+                    
+                    <td>${{ number_format($logic->filing_fee,2) }}</td>
+                    <td>${{ number_format($logic->translation_fee,2) }}</td>
+                    <td>${{ number_format($logic->official_fee,2) }}</td>
+                    <td>
+                        <span class="badge {{ $logic->status ? 'bg-success':'bg-danger' }}">
+                            {{ $logic->status ? 'Active' : 'Inactive' }}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="{{ route('pricing-logics.edit', $logic) }}" class="btn btn-sm btn-warning">Edit</a>
+
+<form action="{{ route('pricing-logics.destroy', $logic) }}" method="POST" class="d-inline"
+      onsubmit="return confirm('Delete this?')">
+    @csrf @method('DELETE')
+    <button class="btn btn-sm btn-danger">Delete</button>
+</form>
+                    </td>
+                </tr>
             @endforeach
         </tbody>
     </table>
 
-    {{ $rules->links() }}
+    {{ $logics->links() }}
 </div>
 @endsection

@@ -22,6 +22,9 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'pricing_level',
+        'pf_level_id',
+        'tf_level_id',
     ];
 
     /**
@@ -44,7 +47,22 @@ class User extends Authenticatable
     ];
 
     public function quotes()
-{
-    return $this->hasMany(Quote::class);
-}
+    {
+        return $this->hasMany(Quote::class);
+    }
+
+    public function pricingLevel()
+    {
+        return $this->belongsTo(PricingLevel::class);
+    }
+
+    public function pfLevel()
+    {
+        return $this->belongsTo(PricingLevel::class, 'pf_level_id');
+    }
+
+    public function tfLevel()
+    {
+        return $this->belongsTo(PricingLevel::class, 'tf_level_id');
+    }
 }

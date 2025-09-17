@@ -31,9 +31,16 @@
 
     {{-- Pricing Logic --}}
     <li>
-      <a href="{{ url('/admin/pricing') }}">
+      <a href="{{ url('/admin/pricing-logics') }}">
         <div class="nav_icon_small"><i class="fa-solid fa-gears"></i></div>
         <div class="nav_title"><span>Pricing Logic</span></div>
+      </a>
+    </li>
+    {{-- Pricing Levels --}}
+    <li>
+      <a href="{{ url('/admin/pricing-levels') }}">
+        <div class="nav_icon_small"><i class="fa-solid fa-gears"></i></div>
+        <div class="nav_title"><span>Pricing levels</span></div>
       </a>
     </li>
 

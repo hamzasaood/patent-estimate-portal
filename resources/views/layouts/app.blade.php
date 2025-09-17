@@ -74,6 +74,76 @@
     .footer .social a:hover {
       color: var(--brand-primary);
     }
+
+
+
+
+
+
+
+
+
+
+
+    :root {
+  --brand-primary: #4f708e;
+  --brand-dark: #2f4354;
+  --brand-light: #f7f9fc;
+}
+
+body {
+  font-family: 'Inter', 'Helvetica Neue', sans-serif;
+  color: #333;
+  background: #fff;
+}
+
+h1, h2, h3, h4, h5 {
+  font-weight: 700;
+  color: var(--brand-dark);
+}
+
+.section-title {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  color: var(--brand-primary);
+  position: relative;
+  display: inline-block;
+}
+
+.section-title::after {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 3px;
+  background: var(--brand-primary);
+  margin: 0.5rem auto 0;
+  border-radius: 2px;
+}
+
+.btn-brand {
+  background: var(--brand-primary);
+  color: #fff;
+  border-radius: 6px;
+  padding: 0.7rem 1.5rem;
+  font-weight: 600;
+  transition: 0.3s;
+}
+.btn-brand:hover {
+  background: var(--brand-dark);
+}
+
+.btn-outline-brand {
+  border: 2px solid var(--brand-primary);
+  color: var(--brand-primary);
+  border-radius: 6px;
+  padding: 0.7rem 1.5rem;
+  font-weight: 600;
+}
+.btn-outline-brand:hover {
+  background: var(--brand-primary);
+  color: #fff;
+}
+
   </style>
 </head>
 <body class="bg-light d-flex flex-column min-vh-100">
@@ -122,6 +192,7 @@
               @else
                 <li><a class="dropdown-item" href="{{ url('/dashboard') }}"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a></li>
                 <li><a class="dropdown-item" href="{{ url('/profile') }}"><i class="bi bi-person me-2"></i> Profile</a></li>
+                <li><a class="dropdown-item" href="{{ url('/quotes/all') }}"><i class="bi bi-person me-2"></i> My Qoutes</a></li>
               @endif
 
                 <li>
@@ -141,8 +212,10 @@
   </nav>
 
   {{-- MAIN --}}
-  <main class="flex-grow-1 py-4">
+  <main class="flex-grow-0 ">
+    
     @yield('content')
+    
   </main>
 
   {{-- FOOTER --}}

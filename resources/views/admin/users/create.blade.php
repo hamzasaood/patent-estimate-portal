@@ -41,6 +41,30 @@
         @error('role') <small class="text-danger">{{ $message }}</small> @enderror
       </div>
 
+      <div class="mb-3">
+        <label class="form-label">Patent Fee Level</label>
+            <select name="pf_level_id" class="form-select">
+        <option value="">-- PF Level (Default Level 1) --</option>
+        @foreach(\App\Models\PricingLevel::where('kind','pf')->get() as $lvl)
+          <option value="{{ $lvl->id }}" >
+            {{ $lvl->name }} ({{ $lvl->adjustment_percent }}%)
+          </option>
+        @endforeach
+        </select>
+      
+      </div>
+    <div class="mb-3">
+        <label class="form-label">translation Fee Level</label>
+        <select name="tf_level_id" class="form-select">
+          <option value="">-- TF Level (Default Level 1) --</option>
+          @foreach(\App\Models\PricingLevel::where('kind','tf')->get() as $lvl)
+            <option value="{{ $lvl->id }}" >
+              {{ $lvl->name }} ({{ $lvl->adjustment_percent }}%)
+            </option>
+          @endforeach
+        </select>
+    </div>
+
       <div class="text-end">
         <a href="{{ route('users.index') }}" class="btn btn-secondary">Cancel</a>
         <button type="submit" class="btn btn-success">Save</button>

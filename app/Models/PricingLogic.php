@@ -9,22 +9,30 @@ class PricingLogic extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'jurisdiction','application_type','priority_fee',
-        'base_fee','per_claim_fee','per_page_fee','per_drawing_fee','per_sequence_page_fee',
-        'translation_fee','expedited_fee','tax_percentage',
-        'status','claims_threshold','pages_threshold',
-    ];
-    protected $casts = [
-    'base_fee'        => 'float',
-    'claims_threshold'=> 'integer',
-    'per_claim_fee'   => 'float',
-    'pages_threshold' => 'integer',
-    'per_page_fee'    => 'float',
-    'per_drawing_fee' => 'float',
-    'expedited_fee'   => 'float',
+    'region','country','language','service',
+    'filing_fee','translation_fee','official_fee',
+    'excess_claim_fee','claims_threshold','excess_page_fee','pages_threshold',
+    'priority_fee','priority_threshold',
+    'drawing_fee_small','drawing_small_threshold','drawing_fee_large','drawing_large_threshold',
+    'per_sequence_page_fee','special_rules','status'
+];
+
+protected $casts = [
+    'filing_fee' => 'float',
     'translation_fee' => 'float',
-    'priority_fee'    => 'float',
-    'tax_percentage'  => 'float',
-     ];
+    'official_fee' => 'float',
+    'excess_claim_fee' => 'float',
+    'claims_threshold' => 'integer',
+    'excess_page_fee'=> 'float',
+    'pages_threshold'=> 'integer',
+    'priority_fee' => 'float',
+    'priority_threshold'=> 'integer',
+    'drawing_fee_small' => 'float',
+    'drawing_small_threshold' => 'integer',
+    'drawing_fee_large' => 'float',
+    'drawing_large_threshold' => 'integer',
+    'per_sequence_page_fee' => 'float',
+];
+
 
 }

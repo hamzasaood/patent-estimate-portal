@@ -11,7 +11,8 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::where('role', '!=', 'admin')->latest()->paginate(10);
+        $users = User::with('pfLevel','tfLevel')->where('role', '!=', 'admin')->get();
+        //dd($users);
         return view('admin.users.index', compact('users'));
     }
 
@@ -26,7 +27,9 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6|confirmed',
-            'role' => 'required|in:user,admin'
+            'role' => 'required|in:user,admin',
+            'pf_level_id' => 'nullable|exists:pricing_levels,id',
+            'tf_level_id' => 'nullable|exists:pricing_levels,id',
         ]);
 
         $data['password'] = Hash::make($data['password']);
@@ -46,7 +49,9 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,'.$user->id,
             'role' => 'required|in:user,admin',
-            'password' => 'nullable|min:6|confirmed'
+            'pf_level_id' => 'nullable|exists:pricing_levels,id',
+            'tf_level_id' => 'nullable|exists:pricing_levels,id',
+            'password' => 'nullable|min:6|confirmed',
         ]);
 
         if($request->filled('password')){

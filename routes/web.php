@@ -3,6 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\QuotesController;
 use App\Http\Controllers\Admin\PricingLogicController;
+use App\Http\Controllers\Admin\PricingLevelController;
+
+
 
 use App\Http\Controllers\QuoteController;
 
@@ -40,8 +43,11 @@ Route::middleware(['auth','admin'])->prefix('admin')->group(function () {
     Route::get('dashboard/data', [QuotesController::class,'data'])->name('admin.dashboard.data');
     Route::resource('quotes', QuotesController::class);
 
-    Route::resource('pricing', PricingLogicController::class);
+    Route::resource('pricing-logics', PricingLogicController::class);
+
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
+
+    Route::resource('pricing-levels', PricingLevelController::class);
 });
 
 Route::get('/api/wipo/{appNo}', function($appNo){
@@ -49,14 +55,22 @@ Route::get('/api/wipo/{appNo}', function($appNo){
     return response()->json($wipo->fetchByApplication($appNo));
 });
 
+Route::get('/wipo/fetch/{application_number}', [QuoteController::class, 'fetchWipo']);
+Route::get('/epo/fetch/{application_number}', [QuoteController::class, 'fetchEpo']);
 
 
+Route::get('/quotes/all', [QuoteController::class, 'index'])->name('quotes.index')->middleware('auth');
 Route::get('/quick/quotes/create', [QuoteController::class, 'create'])->name('quotes.create.quick');
 Route::post('/quick/quotes', [QuoteController::class, 'store'])->name('quotes.store.quick');
 Route::get('/quick/{quote}', [QuoteController::class, 'show'])->name('quotes.show.quick');
 
 Route::get('/quotes/{quote}/download', [App\Http\Controllers\QuoteController::class, 'download'])
      ->name('quotes.download');
+
+
+     Route::post('/quotes/prepay', [QuoteController::class, 'prepay'])->name('quotes.prepay');
+Route::get('/quotes/payment/success/{quote}', [QuoteController::class, 'paymentSuccess'])->name('quotes.payment.success');
+Route::get('/quotes/payment/cancel/{quote}', [QuoteController::class, 'paymentCancel'])->name('quotes.payment.cancel');
 
 
 // routes/web.php
