@@ -34,6 +34,13 @@ Route::view('/contact', 'contact');
 
 Route::view('/quotes/create', 'quotes.create');
 //Route::view('/admin/quotes', 'admin.quotes.index');
+
+Route::post('/contact/us',function(){
+    
+
+    
+})->name('contact.send');
+
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
@@ -54,6 +61,10 @@ Route::get('/api/wipo/{appNo}', function($appNo){
     $wipo = new \App\Services\WipoService;
     return response()->json($wipo->fetchByApplication($appNo));
 });
+
+// routes/web.php
+Route::get('/wipo/real/fetch/{appNo}', [App\Http\Controllers\WipoController::class, 'fetch']);
+
 
 Route::get('/wipo/fetch/{application_number}', [QuoteController::class, 'fetchWipo']);
 Route::get('/epo/fetch/{application_number}', [QuoteController::class, 'fetchEpo']);

@@ -4,7 +4,7 @@
 @section('content')
 
 {{-- HERO --}}
-<section class="position-relative" style="height:70vh; background:url('{{ asset('images/about-hero.jpg') }}') center/cover no-repeat;">
+<section class="position-relative" style="height:70vh; background:url('{{ asset('/about.jpg') }}') center/cover no-repeat;">
   <div class="overlay position-absolute top-0 start-0 w-100 h-100" style="background:rgba(11,18,32,0.6);"></div>
   <div class="d-flex h-100 align-items-center justify-content-center text-center text-white position-relative">
     <div data-aos="fade-up">
@@ -19,7 +19,7 @@
   <div class="container">
     <div class="row align-items-center g-5">
       <div class="col-lg-6" data-aos="fade-right">
-        <img src="{{ asset('images/about-story.jpg') }}" class="img-fluid rounded-3 shadow-sm" alt="Our Story">
+        <img src="{{ asset('/story.jpg') }}" class="img-fluid rounded-3 shadow-sm" alt="Our Story">
       </div>
       <div class="col-lg-6" data-aos="fade-left">
         <h2 class="fw-bold mb-4" style="color:#4f708e;">Who We Are</h2>

@@ -365,4 +365,41 @@ $(document).ready(function(){
 
 });
 </script>
+
+
+
+
+<script>
+$(document).ready(function(){
+
+  // Autofill from WIPO samples
+  $("#application_number").on("blur", function(){
+    let appNo = $(this).val();
+    if(!appNo) return;
+
+    $("#wipoStatus").text("🔎 Fetching from WIPO samples...");
+    $.get(`/wipo/fetch/${appNo}`, function(res){
+        if(res.error){
+            $("#wipoStatus").text("❌ No record found.");
+            return;
+        }
+
+        $("#wipoStatus").text("✅ Data fetched!");
+
+        if(res.title) $("[name='title']").val(res.title);
+        if(res.applicant) $("[name='applicant']").val(res.applicant);
+        if(res.claims) $("[name='claims']").val(res.claims).trigger("input");
+        if(res.pages) $("[name='pages']").val(res.pages).trigger("input");
+        if(res.drawings) $("[name='drawings']").val(res.drawings).trigger("input");
+        if(res.region) $("[name='region']").val(res.region.toUpperCase());
+        if(res.filing_date) $("#estimateSummary").prepend(`<p><strong>Filing Date:</strong> ${res.filing_date}</p>`);
+        if(res.priority_date) $("#estimateSummary").prepend(`<p><strong>Priority Date:</strong> ${res.priority_date}</p>`);
+    }).fail(function(){
+        $("#wipoStatus").text("❌ Request failed.");
+    });
+  });
+
+});
+</script>
+
 @endsection

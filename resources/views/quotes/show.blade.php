@@ -6,7 +6,7 @@
 
   {{-- Header --}}
   <div class="p-4 rounded shadow-sm mb-5" 
-       style="background: linear-gradient(315deg, #4f708e, #2d3e50); color:#fff;">
+       style="background: linear-gradient(43deg, #4f708e, #2d3e50); color:#fff;">
     <div class="d-flex justify-content-between align-items-center">
       <div>
         <h2 class="fw-bold mb-1" style="color: #fff;">Estimate / Invoice</h2>
@@ -16,7 +16,7 @@
         @if($quote->firm_logo)
           <img src="{{ asset($quote->firm_logo) }}" alt="Firm Logo" style="max-height:70px;">
         @else
-          <img src="{{ asset('images/emuna-logo.png') }}" alt="Emuna IP Logo" style="max-height:70px;">
+          <img src="{{ asset('/logo.png') }}" alt="Emuna IP Logo" style="max-height:70px;">
         @endif
       </div>
     </div>

@@ -9,22 +9,32 @@
   <div class="carousel-inner">
 
     {{-- Slide 1 --}}
-    <div class="carousel-item active" 
-         style="background: url('{{ asset('images/hero1.jpg') }}') center center/cover no-repeat; height: 100vh; position: relative;">
-      <div class="overlay position-absolute top-0 start-0 w-100 h-100" style="background:rgba(11,18,32,0.6);"></div>
-      <div class="d-flex h-100 align-items-center justify-content-center text-center text-white position-relative">
-        <div data-aos="fade-up">
-          <h1 class="display-3 fw-bold" style="color:#fff;">Foreign Filing Estimates Made Simple</h1>
-          <p class="lead mb-4">Accurate cost projections for global filings in minutes.</p>
-          <a href="{{ url('/quotes/create') }}" class="btn btn-brand btn-lg me-2">
-            <i class="bi bi-calculator"></i> Get a Quotation
-          </a>
-          <a href="{{ url('/solutions') }}" class="btn btn-outline-brand btn-lg">
-            Explore Solutions
-          </a>
-        </div>
-      </div>
+    <div class="carousel-item active" style="height:100vh; position:relative; overflow:hidden;">
+  
+  {{-- Background Video --}}
+  <video autoplay muted loop playsinline class="w-100 h-100" style="object-fit:cover; position:absolute; top:0; left:0; z-index:0;">
+    <source src="{{ asset('video.mp4') }}" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+
+  {{-- Overlay --}}
+  <div class="overlay position-absolute top-0 start-0 w-100 h-100" style="background:rgba(11,18,32,0.6); z-index:1;"></div>
+
+  {{-- Content --}}
+  <div class="d-flex h-100 align-items-center justify-content-center text-center text-white position-relative" style="z-index:2;">
+    <div data-aos="fade-up">
+      <h1 class="display-3 fw-bold" style="color:#fff;">Foreign Filing Estimates Made Simple</h1>
+      <p class="lead mb-4">Accurate cost projections for global filings in minutes.</p>
+      <a href="{{ url('/quotes/create') }}" class="btn btn-brand btn-lg me-2">
+        <i class="bi bi-calculator"></i> Get a Quotation
+      </a>
+      <a href="{{ url('/solutions') }}" class="btn btn-outline-brand btn-lg">
+        Explore Solutions
+      </a>
     </div>
+  </div>
+</div>
+
 
     {{-- Slide 2 --}}
     <div class="carousel-item" 
