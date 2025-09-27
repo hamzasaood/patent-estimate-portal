@@ -167,7 +167,6 @@ h1, h2, h3, h4, h5 {
           <li class="nav-item"><a class="nav-link" href="{{ url('/') }}">Home</a></li>
           <li class="nav-item"><a class="nav-link" href="{{ url('/about') }}">About Us</a></li>
           <li class="nav-item"><a class="nav-link" href="{{ url('/solutions') }}">Solutions</a></li>
-          <li class="nav-item"><a class="nav-link" href="{{ url('/resources') }}">Resources</a></li>
           <li class="nav-item"><a class="nav-link" href="{{ url('/contact') }}">Contact</a></li>
 
           {{-- Quotation CTA --}}
@@ -190,8 +189,7 @@ h1, h2, h3, h4, h5 {
               @if(Auth::user()->role == 'admin')
                 <li><a class="dropdown-item" href="{{ url('admin/dashboard') }}"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a></li>
               @else
-                <li><a class="dropdown-item" href="{{ url('/dashboard') }}"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a></li>
-                <li><a class="dropdown-item" href="{{ url('/profile') }}"><i class="bi bi-person me-2"></i> Profile</a></li>
+                
                 <li><a class="dropdown-item" href="{{ url('/quotes/all') }}"><i class="bi bi-person me-2"></i> My Qoutes</a></li>
               @endif
 
@@ -254,7 +252,7 @@ h1, h2, h3, h4, h5 {
           <ul class="list-unstyled small">
             <li><i class="bi bi-envelope me-2"></i> info@emunaip.com</li>
             <li><i class="bi bi-telephone me-2"></i> +1-516-200-6130</li>
-            <li><i class="bi bi-geo-alt me-2"></i> New York, USA</li>
+            <li><i class="bi bi-geo-alt me-2"></i> NEW YORK OFFICE 1000 East End Woodmere, NY 11598</li>
           </ul>
         </div>
       </div>

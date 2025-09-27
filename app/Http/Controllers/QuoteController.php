@@ -48,11 +48,11 @@ class QuoteController extends Controller
 
     // Translation Fee (pages × per page fee × TF level %)
     $translationFee = 0;
-    if (($data['translation'] ?? 'none') !== 'none') {
+    
         $translationFee = $data['pages'] * (
             (float) $rule->translation_fee + ((float) $rule->translation_fee * ($tfLevel / 100))
         );
-    }
+    
 
     // Official Fee (flat from rule)
     $officialFee = (float) $rule->official_fee;
@@ -71,11 +71,9 @@ class QuoteController extends Controller
     if ($data['drawings'] > $rule->drawing_large_threshold) {
         $extras += ($data['drawings'] - $rule->drawing_large_threshold) * (float) $rule->drawing_fee_large;
     }
-    if (!empty($data['expedited'])) {
-        $extras += (float) ($rule->expedited_fee ?? 0);
-    }
+    
     if (!empty($data['priority'])) {
-        $extras += (float) ($rule->priority_fee ?? 0);
+        $extras += (float) ($rule->priority_fee ?? 0) * (float) $data['priority'];
     }
 
     // Totals
@@ -164,7 +162,7 @@ public function store(Request $request)
 
         'expedited'          => 'nullable|string',
         'translation'        => 'nullable|string',
-        'priority'           => 'nullable|string',
+        'priority'           => 'nullable',
 
         // White label
         'is_white_label'     => 'nullable|boolean',
@@ -173,8 +171,8 @@ public function store(Request $request)
     ]);
 
     // Normalize
-    $data['expedited'] = ($data['expedited'] ?? 'no') === 'yes';
-    $data['priority']  = ($data['priority'] ?? 'no') === 'yes';
+    
+    //$data['priority']  = ($data['priority'] );
     $data['drawings']  = $data['drawings'] ?? 0;
 
     // Pricing Rule
@@ -233,7 +231,7 @@ public function store(Request $request)
         'special_instructions' => $data['special_instructions'] ?? null,
         'attachment'       => $attachmentPath,
 
-        'expedited'        => $data['expedited'],
+        'expedited'        => $data['expedited'] ?? '0',
         'translation'      => $data['translation'] ?? 'none',
         'priority'         => $data['priority'],
 
@@ -259,6 +257,7 @@ public function store(Request $request)
         'firm_logo'       => $firmLogo,
         'total_with_firm' => $totalWithFirm,
         'firm_id'         => $isWhiteLabel ? Auth::id() : null,
+        'notes'           => $rule->special_rules,
     ]);
 
     return redirect()->route('quotes.show.quick', $quote);
@@ -287,16 +286,16 @@ private function saveQuoteFromRequest(Request $request, $status = 'quoted')
 
         'expedited'   => 'nullable|string',
         'translation' => 'nullable|string',
-        'priority'    => 'nullable|string',
+        'priority'    => 'nullable',
 
         'is_white_label' => 'nullable|boolean',
         'firm_fees'      => 'nullable|numeric|min:0',
         'firm_logo'      => 'nullable|image|max:2048',
     ]);
 
-    $data['expedited'] = ($data['expedited'] ?? 'no') === 'yes';
-    $data['priority']  = ($data['priority'] ?? 'no') === 'yes';
-    $data['drawings']  = $data['drawings'] ?? 0;
+    
+    //$data['priority']  = $data['priority'];
+    
 
     $rule = PricingLogic::where('region',$data['region'])
         ->where('service',$data['service'])
@@ -349,7 +348,7 @@ private function saveQuoteFromRequest(Request $request, $status = 'quoted')
         'special_instructions' => $data['special_instructions'] ?? null,
         'attachment' => $attachmentPath,
 
-        'expedited'   => $data['expedited'],
+        
         'translation' => $data['translation'] ?? 'none',
         'priority'    => $data['priority'],
 
@@ -373,6 +372,7 @@ private function saveQuoteFromRequest(Request $request, $status = 'quoted')
         'firm_logo'       => $firmLogo,
         'total_with_firm' => $totalWithFirm,
         'firm_id'         => $isWhiteLabel ? Auth::id() : null,
+        'notes'           => $rule->special_rules,
     ]);
 
     return $quote;

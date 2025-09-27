@@ -38,8 +38,10 @@ class WipoController extends Controller
             return response()->json(['error' => 'Exception: '.$e->getMessage()], 500);
         }
     }
-    public function fetch($appNo)
+    public function fetch(Request $request)
+
     {
+        $appNo = $request->query('appNo');
         $record = WipoSample::where('application_number', $appNo)->first();
 
         if (!$record) {

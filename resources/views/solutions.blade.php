@@ -70,30 +70,48 @@
   </div>
 </section>
 
+
 {{-- INDUSTRIES WE SERVE --}}
 <section class="py-5">
   <div class="container">
     <h2 class="fw-bold text-center mb-5" style="color:#4f708e;">Industries We Serve</h2>
     <div class="row g-4 text-center">
-      <div class="col-md-3">
-        <i class="bi bi-cpu display-5 mb-2" style="color:#4f708e;"></i>
-        <p class="fw-bold mb-0">Technology</p>
-      </div>
-      <div class="col-md-3">
+      <div class="col-md-3 col-6">
         <i class="bi bi-prescription2 display-5 mb-2" style="color:#4f708e;"></i>
-        <p class="fw-bold mb-0">Pharma & Biotech</p>
+        <p class="fw-bold mb-0">Biotechnology</p>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-3 col-6">
+        <i class="bi bi-laptop display-5 mb-2" style="color:#4f708e;"></i>
+        <p class="fw-bold mb-0">Software & IT</p>
+      </div>
+      <div class="col-md-3 col-6">
+        <i class="bi bi-wifi display-5 mb-2" style="color:#4f708e;"></i>
+        <p class="fw-bold mb-0">Telecommunications</p>
+      </div>
+      <div class="col-md-3 col-6">
+        <i class="bi bi-lightning-charge display-5 mb-2" style="color:#4f708e;"></i>
+        <p class="fw-bold mb-0">Energy & Clean Tech</p>
+      </div>
+      <div class="col-md-3 col-6">
+        <i class="bi bi-heart-pulse display-5 mb-2" style="color:#4f708e;"></i>
+        <p class="fw-bold mb-0">Healthcare & Medical Devices</p>
+      </div>
+      <div class="col-md-3 col-6">
+        <i class="bi bi-gear display-5 mb-2" style="color:#4f708e;"></i>
+        <p class="fw-bold mb-0">Mechanical Engineering</p>
+      </div>
+      <div class="col-md-3 col-6">
         <i class="bi bi-car-front display-5 mb-2" style="color:#4f708e;"></i>
-        <p class="fw-bold mb-0">Automotive</p>
+        <p class="fw-bold mb-0">Automotive & Mobility</p>
       </div>
-      <div class="col-md-3">
-        <i class="bi bi-hammer display-5 mb-2" style="color:#4f708e;"></i>
-        <p class="fw-bold mb-0">Engineering</p>
+      <div class="col-md-3 col-6">
+        <i class="bi bi-flower3 display-5 mb-2" style="color:#4f708e;"></i>
+        <p class="fw-bold mb-0">Agriculture & FoodTech</p>
       </div>
     </div>
   </div>
 </section>
+
 
 {{-- WHY CHOOSE US --}}
 <section class="py-5 bg-light">

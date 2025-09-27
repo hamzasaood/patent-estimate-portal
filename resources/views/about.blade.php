@@ -46,7 +46,7 @@
 {{-- TEAM --}}
 <section class="py-5">
   <div class="container">
-    <h2 class="fw-bold text-center mb-5" style="color:#4f708e;">Meet Our Team</h2>
+    <h2 class="fw-bold text-center mb-5" style="color:#4f708e;">Meet Our Management Team</h2>
     <div class="row g-4">
       @php
         $team = [

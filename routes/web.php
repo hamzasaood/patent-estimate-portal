@@ -66,7 +66,7 @@ Route::get('/api/wipo/{appNo}', function($appNo){
 Route::get('/wipo/real/fetch/{appNo}', [App\Http\Controllers\WipoController::class, 'fetch']);
 
 
-Route::get('/wipo/fetch/{application_number}', [QuoteController::class, 'fetchWipo']);
+Route::get('/wipo/fetch/old/{application_number}', [QuoteController::class, 'fetchWipo']);
 Route::get('/epo/fetch/{application_number}', [QuoteController::class, 'fetchEpo']);
 
 
@@ -85,5 +85,5 @@ Route::get('/quotes/payment/cancel/{quote}', [QuoteController::class, 'paymentCa
 
 
 // routes/web.php
-Route::get('/wipo/fetch/{application_number}', [App\Http\Controllers\WipoController::class, 'fetch']);
+Route::get('/wipo/fetch', [App\Http\Controllers\WipoController::class, 'fetch']);
 

@@ -12,7 +12,7 @@ class PricingLogic extends Model
     'region','country','language','service',
     'filing_fee','translation_fee','official_fee',
     'excess_claim_fee','claims_threshold','excess_page_fee','pages_threshold',
-    'priority_fee','priority_threshold',
+    'priority_fee','priority_threshold','entity',
     'drawing_fee_small','drawing_small_threshold','drawing_fee_large','drawing_large_threshold',
     'per_sequence_page_fee','special_rules','status'
 ];

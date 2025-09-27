@@ -26,9 +26,9 @@
     @if($quote->firm_logo)
       <img src="{{ public_path($quote->firm_logo) }}" alt="Firm Logo">
     @else
-      <img src="{{ public_path('images/emuna-logo.png') }}" alt="Emuna IP">
+      <img src="{{ public_path('/logo.png') }}" alt="Emuna IP">
     @endif
-    <h2>Patent Estimate</h2>
+    
     <p class="sub">Quote #{{ $quote->id }} | Date: {{ $quote->created_at->format('d M Y') }}</p>
   </div>
 
@@ -46,12 +46,9 @@
     <tr><th>Claims</th><td>{{ $quote->claims }}</td></tr>
     <tr><th>Pages</th><td>{{ $quote->pages }}</td></tr>
     <tr><th>Drawings</th><td>{{ $quote->drawings }}</td></tr>
-  </table>
 
-  {{-- Cost Breakdown --}}
-  <h3>Cost Breakdown</h3>
-  <table>
-    
+
+
     <tr>
       <th>Filing Fee</th>
       <td>${{ number_format($quote->filing_fee, 2) }}</td>
@@ -72,13 +69,19 @@
     @else
       <tr class="total-row"><th>Total</th><td>${{ number_format($quote->total, 2) }}</td></tr>
     @endif
-  </table>
 
-  {{-- Special Instructions --}}
-  @if($quote->special_instructions)
-    <h3>Special Instructions</h3>
-    <p>{{ $quote->special_instructions }}</p>
-  @endif
+
+    @if($quote->notes)
+    <tr><td colspan="2"><p>Note : </p><br><p>{{ $quote->notes }}</p></td></tr>
+
+    @endif
+
+     @if($quote->special_instructions)
+    
+    <tr><td colspan="2"><p>Special Instructions : </p><br><p>{{ $quote->special_instructions }}</p></td></tr>
+    @endif
+
+  </table>  
 
   {{-- Footer --}}
   <div class="footer">

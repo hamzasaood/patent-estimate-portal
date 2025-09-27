@@ -84,6 +84,17 @@
     </div>
   </div>
 
+
+
+  @if($quote->notes)
+  <div class="card shadow-sm border-0 mb-4">
+    <div class="card-body">
+      <h6 class="text-uppercase fw-bold mb-3" style="color:#4f708e;">Note</h6>
+      <p>{{ $quote->notes }}</p>
+    </div>
+  </div>
+  @endif
+
   {{-- Special Instructions --}}
   @if($quote->special_instructions)
   <div class="card shadow-sm border-0 mb-4">

@@ -78,52 +78,7 @@
 </div>
 
 
-{{-- QUICK ESTIMATE --}}
-<section class="py-5 bg-light">
-  <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-lg-8">
-        <div class="card shadow-lg border-0 rounded-4 p-4" data-aos="zoom-in">
-          <div class="card-body p-4">
-            <h4 class="fw-bold mb-3 text-center text-primary">Quick Estimate</h4>
-            <form class="row g-3">
-              <div class="col-md-6">
-                <label class="form-label">Application Type</label>
-                <select class="form-select">
-                  <option>Provisional</option>
-                  <option>Non-Provisional</option>
-                  <option>PCT</option>
-                  <option>National Phase</option>
-                </select>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Jurisdiction</label>
-                <select class="form-select">
-                  <option>US</option>
-                  <option>EU</option>
-                  <option>CN</option>
-                  <option>JP</option>
-                  <option>UK</option>
-                </select>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Claims</label>
-                <input type="number" class="form-control" placeholder="e.g., 20">
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Pages</label>
-                <input type="number" class="form-control" placeholder="e.g., 25">
-              </div>
-              <div class="col-12 d-grid">
-                <a href="{{ url('/quick/quotes/create') }}" class="btn btn-brand">Continue to Full Form</a>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+
 
 {{-- HOW IT WORKS --}}
 <section class="py-5">
@@ -258,7 +213,7 @@
 <section class="py-5 text-white text-center" style="background:var(--brand-primary)">
   <div class="container" data-aos="zoom-in">
     <h2 class="fw-bold mb-3">Ready to Get Started?</h2>
-    <p class="lead mb-4">Receive your patent estimate today and file with confidence.</p>
+    <p class="lead mb-4">Receive your estimate today and file with confidence.</p>
     <a href="{{ url('/quick/quotes/create') }}" class="btn btn-light btn-lg shadow-sm">
       <i class="bi bi-arrow-right-circle"></i> Get Your Free Estimate
     </a>
