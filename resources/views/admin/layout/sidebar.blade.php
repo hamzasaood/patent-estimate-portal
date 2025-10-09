@@ -56,25 +56,7 @@
       </ul>
     </li>
 
-    {{-- Admins --}}
-    <li>
-      <a class="has-arrow" href="#" aria-expanded="false">
-        <div class="nav_icon_small"><i class="fa-solid fa-user-shield"></i></div>
-        <div class="nav_title"><span>Admins</span></div>
-      </a>
-      <ul>
-        <li><a href="{{ url('/admin/admins') }}">Admin List</a></li>
-        <li><a href="{{ url('/admin/admins/create') }}">Add New Admin</a></li>
-      </ul>
-    </li>
-
-    {{-- Change Logs --}}
-    <li>
-      <a href="{{ url('/admin/change-logs') }}">
-        <div class="nav_icon_small"><i class="fa-regular fa-clock"></i></div>
-        <div class="nav_title"><span>Change Logs</span></div>
-      </a>
-    </li>
+    
 
     {{-- Settings --}}
     <li>

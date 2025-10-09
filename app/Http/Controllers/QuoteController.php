@@ -10,6 +10,8 @@ use App\Models\PricingLogic;
 use Barryvdh\DomPDF\Facade\Pdf; // make sure barryvdh/laravel-dompdf is installed
 use Stripe\Stripe;
 use Stripe\Checkout\Session as StripeSession;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 
 
@@ -24,9 +26,22 @@ class QuoteController extends Controller
 
     public function index()
     {
-        $quotes = Quote::where('user_id', auth()->id())
-                    ->latest()
-                    ->paginate(10);
+        $quotes = DB::table('quotes')
+    ->where('user_id', auth()->id())
+    ->select(
+        'invoice_group',
+        'service',
+        DB::raw('GROUP_CONCAT(region ORDER BY region SEPARATOR ", ") as regions'),
+        DB::raw('MAX(created_at) as created_at'),
+        DB::raw('SUM(total_with_firm) as total_with_firm'),
+        DB::raw('SUM(total) as total'),
+        DB::raw('MAX(status) as status'),
+        DB::raw('MAX(is_white_label) as is_white_label')
+    )
+    ->groupBy('invoice_group','service')
+    ->orderByDesc(DB::raw('MAX(created_at)'))
+    ->get();
+
 
         return view('quotes.index', compact('quotes'));
     }
@@ -103,6 +118,18 @@ class QuoteController extends Controller
         $quote = $this->saveQuoteFromRequest($request, $status = 'pending_payment');
 
 
+        $quotes = Quote::where('invoice_group', $quote)->get();
+
+
+        
+
+    
+
+    $grandTotal = $quotes->sum('total_with_firm');
+
+
+        
+
         //dd($quote);
 
         // 2. Stripe setup
@@ -113,10 +140,10 @@ class QuoteController extends Controller
             'line_items' => [[
                 'price_data' => [
                     'currency'     => 'usd',
-                    'unit_amount'  => ($quote->total_with_firm * 100), // cents
+                    'unit_amount'  => ($grandTotal * 100), // cents
                     'product_data' => [
-                        'name' => 'Patent Quote #'.$quote->id,
-                        'description' => $quote->service.' in '.$quote->region,
+                        'name' => 'Patent Quote #'.$quote,
+                        
                     ],
                 ],
                 'quantity' => 1,
@@ -128,28 +155,62 @@ class QuoteController extends Controller
         
         return redirect($checkout->url);
     }
-    public function paymentSuccess(Quote $quote)
-    {
-         $quote->update(['status' => 'paid']);
-         return view('quotes.success', compact('quote'));
+    public function paymentSuccess($groupId)
+{
+    // Fetch all quotes in the same invoice group
+    $quotes = Quote::where('invoice_group', $groupId)->get();
+
+    if ($quotes->isEmpty()) {
+        abort(404, 'Invoice group not found.');
     }
 
-    public function paymentCancel(Quote $quote)
-    {
-        $quote->update(['status' => 'cancelled']);
-        return view('quotes.cancel', compact('quote'));
+    // Mark all quotes in this group as paid
+    Quote::where('invoice_group', $groupId)
+        ->update(['status' => 'paid']);
+
+    return view('quotes.success', [
+        'quotes'     => $quotes,
+        'groupId'    => $groupId,
+        'grandTotal' => $quotes->sum('total_with_firm'),
+    ]);
+}
+
+public function paymentCancel($groupId)
+{
+    // Fetch all quotes in the same group
+    $quotes = Quote::where('invoice_group', $groupId)->get();
+
+    if ($quotes->isEmpty()) {
+        abort(404, 'Invoice group not found.');
     }
+
+    // Mark them as cancelled
+    Quote::where('invoice_group', $groupId)
+        ->update(['status' => 'cancelled']);
+
+    return view('quotes.cancel', [
+        'quotes'     => $quotes,
+        'groupId'    => $groupId,
+        'grandTotal' => $quotes->sum('total_with_firm'),
+    ]);
+}
+
 
 
 
 
     
 
+
+
+
+
 public function store(Request $request)
 {
+    //dd($request->all);
     $data = $request->validate([
         'service'            => 'required|string',
-        'region'             => 'required|string',
+        'region'             => 'required|array', // will still be validated, but we’ll save multiple via breakdown
         'application_number' => 'nullable|string',
         'title'              => 'nullable|string',
         'reference_number'   => 'nullable|string',
@@ -168,27 +229,29 @@ public function store(Request $request)
         'is_white_label'     => 'nullable|boolean',
         'firm_fees'          => 'nullable|numeric|min:0',
         'firm_logo'          => 'nullable|image|max:2048',
+        'word_count'         => 'nullable',
+
+        // New — frontend will send all regions + fees here
+        'quote_breakdown'  => 'required|json',
     ]);
 
-    // Normalize
+
+    //dd('okay');
     
-    //$data['priority']  = ($data['priority'] );
-    $data['drawings']  = $data['drawings'] ?? 0;
+    
 
-    // Pricing Rule
-    $rule = PricingLogic::where('region',$data['region'])
-        ->where('service',$data['service'])
-        ->where('status','active')
-        ->first();
+    $data['drawings'] = $data['drawings'] ?? 0;
+    $breakdown = json_decode($data['quote_breakdown'], true);
 
-    if (!$rule) {
-        return back()->withErrors(['pricing' => 'No pricing rule found for this selection.']);
+    if (!$breakdown || !is_array($breakdown)) {
+        return back()->withErrors(['pricing' => 'Invalid pricing breakdown.']);
     }
 
-    // ✅ New pricing
-    $pricing = $this->calculatePricing($data, $rule);
+    // Common group id
+    $invoiceGroup = 'EIP' . rand(1000, 999999);
 
-    // WIPO fetch
+
+    // WIPO fetch (only once for all)
     $wipoData = null;
     if (!empty($data['application_number']) && $data['service'] === 'pct_national_phase') {
         $wipoService = new WipoService();
@@ -214,53 +277,60 @@ public function store(Request $request)
         $file->move(public_path('quotes/logos'), $filename);
         $firmLogo = 'quotes/logos/'.$filename;
     }
-    $totalWithFirm = $pricing['total'] + $firmFees;
 
-    // Save
-    $quote = Quote::create([
-        'user_id' => Auth::id(),
-        'service' => $data['service'],
-        'region'  => $data['region'],
-        'application_number' => $data['application_number'] ?? null,
-        'title'   => $data['title'] ?? ($wipoData['title'] ?? null),
-        'reference_number' => $data['reference_number'] ?? null,
-        'applicant'        => $data['applicant'] ?? ($wipoData['applicant'] ?? null),
-        'claims'           => $data['claims'],
-        'pages'            => $data['pages'],
-        'drawings'         => $data['drawings'],
-        'special_instructions' => $data['special_instructions'] ?? null,
-        'attachment'       => $attachmentPath,
+    // Save each region quote separately but linked by group
+    foreach ($breakdown as $row) {
+        Quote::create([
+            'user_id' => Auth::id(),
+            'service' => $data['service'],
+            'region'  => $row['region'], // take region from breakdown
+            'application_number' => $data['application_number'] ?? null,
+            'title'   => $data['title'] ?? ($wipoData['title'] ?? null),
+            'reference_number' => $data['reference_number'] ?? null,
+            'applicant'        => $data['applicant'] ?? ($wipoData['applicant'] ?? null),
+            'claims'           => $data['claims'],
+            'pages'            => $data['pages'],
+            'drawings'         => $data['drawings'],
+            'word_count'       => $dat['word_count'],
+            'special_instructions' => $data['special_instructions'] ?? null,
+            'attachment'       => $attachmentPath,
 
-        'expedited'        => $data['expedited'] ?? '0',
-        'translation'      => $data['translation'] ?? 'none',
-        'priority'         => $data['priority'],
+            'expedited'        => $data['expedited'] ?? '0',
+            'translation'      => $data['translation'] ?? 'none',
+            'priority'         => $data['priority'],
 
-        // Fees
-        'filing_fee'      => $pricing['filing_fee'],
-        'translation_fee' => $pricing['translation_fee'],
-        'official_fee'    => $pricing['official_fee'],
-        'extra_fee'       => $pricing['extra_fee'],
-        'tax'             => $pricing['tax'],
-        'total'           => $pricing['total'],
+            // Fees (from breakdown JSON)
+            'filing_fee'      => $row['filing_fee'],
+            'translation_fee' => $row['translation_fee'],
+            'official_fee'    => $row['official_fee'],
+            'extra_fee'       => $row['extra_fee'],
+            'tax'             => $row['tax'],
+            'total'           => $row['total'],
 
-        'status'          => 'quoted',
+            'status'          => 'quoted',
 
-        // WIPO
-        'priority_date'=> $wipoData['priority_date'] ?? null,
-        'filing_date'  => $wipoData['filing_date'] ?? null,
-        'deadline_30m' => $wipoData['deadline_30m'] ?? null,
-        'deadline_31m' => $wipoData['deadline_31m'] ?? null,
+            // WIPO
+            'priority_date'=> $wipoData['priority_date'] ?? null,
+            'filing_date'  => $wipoData['filing_date'] ?? null,
+            'deadline_30m' => $wipoData['deadline_30m'] ?? null,
+            'deadline_31m' => $wipoData['deadline_31m'] ?? null,
 
-        // White Label
-        'is_white_label'  => $isWhiteLabel,
-        'firm_fees'       => $firmFees,
-        'firm_logo'       => $firmLogo,
-        'total_with_firm' => $totalWithFirm,
-        'firm_id'         => $isWhiteLabel ? Auth::id() : null,
-        'notes'           => $rule->special_rules,
-    ]);
+            // White Label
+            'is_white_label'  => $isWhiteLabel,
+            'firm_fees'       => $firmFees,
+            'firm_logo'       => $firmLogo,
+            'total_with_firm' => $row['total'] + $firmFees,
+            'firm_id'         => $isWhiteLabel ? Auth::id() : null,
+            'notes'           => $row['special_rules'] ?? null,
+            'language'        => $row['language'],
 
-    return redirect()->route('quotes.show.quick', $quote);
+            // Group
+            'invoice_group'   => $invoiceGroup,
+           // 'pricing_json'    => json_encode($row), // save raw JSON for reference
+        ]);
+    }
+
+    return redirect()->route('quotes.show.quick', $invoiceGroup);
 }
 
 
@@ -269,7 +339,138 @@ public function store(Request $request)
 
 
 
-private function saveQuoteFromRequest(Request $request, $status = 'quoted')
+
+
+
+public function saveQuoteFromRequest(Request $request, $status = 'quoted')
+{
+    //dd($request->all);
+    $data = $request->validate([
+        'service'            => 'required|string',
+        'region'             => 'required|array', // will still be validated, but we’ll save multiple via breakdown
+        'application_number' => 'nullable|string',
+        'title'              => 'nullable|string',
+        'reference_number'   => 'nullable|string',
+        'applicant'          => 'nullable|string',
+        'claims'             => 'required|integer|min:1',
+        'pages'              => 'required|integer|min:1',
+        'drawings'           => 'nullable|integer|min:0',
+        'special_instructions' => 'nullable|string',
+        'attachment'         => 'nullable|file|max:5120',
+
+        'expedited'          => 'nullable|string',
+        'translation'        => 'nullable|string',
+        'priority'           => 'nullable',
+
+        // White label
+        'is_white_label'     => 'nullable|boolean',
+        'firm_fees'          => 'nullable|numeric|min:0',
+        'firm_logo'          => 'nullable|image|max:2048',
+        'word_count'         => 'nullable',
+
+        // New — frontend will send all regions + fees here
+        'quote_breakdown'  => 'required|json',
+    ]);
+
+
+    //dd('okay');
+    
+    
+
+    $data['drawings'] = $data['drawings'] ?? 0;
+    $breakdown = json_decode($data['quote_breakdown'], true);
+
+    if (!$breakdown || !is_array($breakdown)) {
+        return back()->withErrors(['pricing' => 'Invalid pricing breakdown.']);
+    }
+
+    // Common group id
+    $invoiceGroup = 'EIP' . rand(1000, 999999);
+
+    // WIPO fetch (only once for all)
+    $wipoData = null;
+    if (!empty($data['application_number']) && $data['service'] === 'pct_national_phase') {
+        $wipoService = new WipoService();
+        $wipoData = $wipoService->fetchByApplication($data['application_number']);
+    }
+
+    // Attachments
+    $attachmentPath = null;
+    if ($request->hasFile('attachment')) {
+        $file = $request->file('attachment');
+        $filename = time().'_'.$file->getClientOriginalName();
+        $file->move(public_path('quotes/attachments'), $filename);
+        $attachmentPath = 'quotes/attachments/'.$filename;
+    }
+
+    // White Label
+    $isWhiteLabel = $request->boolean('is_white_label');
+    $firmFees = $isWhiteLabel ? ($data['firm_fees'] ?? 0) : 0;
+    $firmLogo = null;
+    if ($isWhiteLabel && $request->hasFile('firm_logo')) {
+        $file = $request->file('firm_logo');
+        $filename = time().'_'.$file->getClientOriginalName();
+        $file->move(public_path('quotes/logos'), $filename);
+        $firmLogo = 'quotes/logos/'.$filename;
+    }
+
+    // Save each region quote separately but linked by group
+    foreach ($breakdown as $row) {
+        Quote::create([
+            'user_id' => Auth::id(),
+            'service' => $data['service'],
+            'region'  => $row['region'], // take region from breakdown
+            'application_number' => $data['application_number'] ?? null,
+            'title'   => $data['title'] ?? ($wipoData['title'] ?? null),
+            'reference_number' => $data['reference_number'] ?? null,
+            'applicant'        => $data['applicant'] ?? ($wipoData['applicant'] ?? null),
+            'claims'           => $data['claims'],
+            'pages'            => $data['pages'],
+            'drawings'         => $data['drawings'],
+            'word_count'       => $data['word_count'],
+            'special_instructions' => $data['special_instructions'] ?? null,
+            'attachment'       => $attachmentPath,
+
+            'expedited'        => $data['expedited'] ?? '0',
+            'translation'      => $data['translation'] ?? 'none',
+            'priority'         => $data['priority'],
+
+            // Fees (from breakdown JSON)
+            'filing_fee'      => $row['filing_fee'],
+            'translation_fee' => $row['translation_fee'],
+            'official_fee'    => $row['official_fee'],
+            'extra_fee'       => $row['extra_fee'],
+            'tax'             => $row['tax'],
+            'total'           => $row['total'],
+
+            'status'          => $status,
+
+            // WIPO
+            'priority_date'=> $wipoData['priority_date'] ?? null,
+            'filing_date'  => $wipoData['filing_date'] ?? null,
+            'deadline_30m' => $wipoData['deadline_30m'] ?? null,
+            'deadline_31m' => $wipoData['deadline_31m'] ?? null,
+
+            // White Label
+            'is_white_label'  => $isWhiteLabel,
+            'firm_fees'       => $firmFees,
+            'firm_logo'       => $firmLogo,
+            'total_with_firm' => $row['total'] + $firmFees,
+            'firm_id'         => $isWhiteLabel ? Auth::id() : null,
+            'notes'           => $row['special_rules'] ?? null,
+            'language'        => $row['language'],
+
+            // Group
+            'invoice_group'   => $invoiceGroup,
+           // 'pricing_json'    => json_encode($row), // save raw JSON for reference
+        ]);
+    }
+
+    return $invoiceGroup;
+}
+
+
+private function saveQuoteFromRequests(Request $request, $status = 'quoted')
 {
     $data = $request->validate([
         'service'  => 'required|string',
@@ -291,6 +492,7 @@ private function saveQuoteFromRequest(Request $request, $status = 'quoted')
         'is_white_label' => 'nullable|boolean',
         'firm_fees'      => 'nullable|numeric|min:0',
         'firm_logo'      => 'nullable|image|max:2048',
+        'word_count'     => 'nullable',
     ]);
 
     
@@ -347,7 +549,7 @@ private function saveQuoteFromRequest(Request $request, $status = 'quoted')
         'drawings'=> $data['drawings'],
         'special_instructions' => $data['special_instructions'] ?? null,
         'attachment' => $attachmentPath,
-
+        'word_count' => $data['word_count'],
         
         'translation' => $data['translation'] ?? 'none',
         'priority'    => $data['priority'],
@@ -389,9 +591,23 @@ public function download(Quote $quote)
 }
 
 
+    public function show($groupId)
+{
+    $quotes = Quote::where('invoice_group', $groupId)->get();
+
+    if ($quotes->isEmpty()) {
+        abort(404, 'Invoice not found.');
+    }
+
+    $grandTotal = $quotes->sum('total_with_firm');
+
+    return view('quotes.show', compact('quotes', 'grandTotal', 'groupId'));
+}
 
 
-    public function show(Quote $quote)
+
+
+    public function showus(Quote $quote)
     {
         return view('quotes.show', compact('quote'));
     }

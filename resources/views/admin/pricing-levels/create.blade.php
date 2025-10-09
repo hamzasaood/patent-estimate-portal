@@ -15,8 +15,11 @@
             <label class="form-label">Kind/Type</label>
             <select name="kind" class="form-select" required>
       <option value="">Select...</option>
-      <option value="pf">Patent Filling Fee Level</option>
-      <option value="tf">Translation Fee Level</option>
+      <option value="pf">Patent Filling Fee Level (Direct/Pct)</option>
+      <option value="tf">Translation Fee Level (Direct/Pct)</option>
+
+      <option value="pfep">Patent Filling Fee Level (EP_Validation)</option>
+      <option value="tfep">Translation Fee Level (EP_Validation)</option>
       
     </select>
         </div>

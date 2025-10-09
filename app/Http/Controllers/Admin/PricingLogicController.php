@@ -16,7 +16,7 @@ class PricingLogicController extends Controller
      */
    public function index()
     {
-        $logics = PricingLogic::latest()->paginate(10);
+        $logics = PricingLogic::get();
         return view('admin.pricing.index', compact('logics'));
     }
 
@@ -55,6 +55,7 @@ class PricingLogicController extends Controller
             'priority_fee'     => 'required|numeric|min:0',
             'tax_percentage'   => 'required|numeric|min:0',
             'status'           => 'required|in:active,inactive',
+            'translation'      =>  'nullable',
         ]);
             
 
@@ -109,6 +110,7 @@ class PricingLogicController extends Controller
             'priority_fee'     => 'required|numeric|min:0',
             'tax_percentage'   => 'required|numeric|min:0',
             'status'           => 'required|in:active,inactive',
+            'translation'      =>  'nullable',
         ]);
 
     $exists = \App\Models\PricingLogic::where('region', $data['region'])

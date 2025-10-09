@@ -7,13 +7,28 @@
   $pricingRules = \App\Models\PricingLogic::where('status','active')->get();
   $pfLevel = auth()->user()->pfLevel->adjustment_percent ?? 0; // Patent Fee level %
   $tfLevel = auth()->user()->tfLevel->adjustment_percent ?? 0; // Translation Fee level %
+
+  $pfLevelEp = auth()->user()->pfLevelep->adjustment_percent ?? 0;
+$tfLevelEp = auth()->user()->tfLevelep->adjustment_percent ?? 0;
 @endphp
+
 
 <script>
   let pricingRules = @json($pricingRules);
   let pfLevel = {{ $pfLevel }};
   let tfLevel = {{ $tfLevel }};
+
+  let pfLevelEp = {{ $pfLevelEp }};
+  let tfLevelEp = {{ $tfLevelEp }};
 </script>
+
+
+<link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
+
+<!-- JS -->
+<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+
+
 
 <style>
   body { background-color: #f5f8fa; }
@@ -36,8 +51,8 @@
   .progress-bar { height:100%; background:linear-gradient(90deg,#4f708e,#3a566c); width:0%; transition:width .4s; }
 </style>
 
-<div class="container">
-  <h1 class="h3 fw-bold mb-4">Patent Estimate Form</h1>
+<div class="container py-5">
+  <h1 class="h3 fw-bold mb-4">Quote Estimate Form</h1>
 
   {{-- Stepper --}}
   <div class="d-flex justify-content-between mb-4">
@@ -80,7 +95,7 @@
             </div>
             <div class="col-md-6">
               <label class="form-label">Region</label>
-              <select class="form-select" name="region" required>
+              <select class="form-select" name="region[]" class="region" id="region" required multiple>
                 <option value="">Select...</option>
                     <!-- Added countries / regions -->
     <option value="Albania">Albania</option>
@@ -256,6 +271,18 @@
                 <option value="provisional_refusal">Provisional Refusal</option>
               </select>
             </div>
+            <div class="col-md-6" style="display:none;" id="translationTypeDiv">
+              <label class="form-label">Translation Type</label>
+              <select class="form-select" name="translation" required>
+                <option value="none">No Translation</option>
+                <option value="full">Full Translation</option>
+                <option value="claims">Claims Only</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Word Count</label>
+              <input type="number" class="form-control" name="word_count" min="0" placeholder="Enter total words">
+            </div>
             <div class="col-md-6">
               <label class="form-label">Number of Claims</label>
               <input type="number" class="form-control" name="claims" required>
@@ -265,7 +292,7 @@
               <input type="number" class="form-control" name="pages" required>
             </div>
             <div class="col-md-6">
-              <label class="form-label">Number of Drawings</label>
+              <label class="form-label">Number of Pages of Drawings</label>
               <input type="number" class="form-control" name="drawings">
             </div>
             <div class="col-md-12">
@@ -275,6 +302,10 @@
             <div class="col-md-12">
               <label class="form-label">Attachments</label>
               <input type="file" class="form-control" name="attachment">
+
+
+              
+
             </div>
           </div>
         </div>
@@ -304,6 +335,17 @@
                 
               </select>
             </div>
+
+              <div class="col-md-6">
+              <label class="form-label">Entity type</label>
+              <select class="form-select" name="entity" id="entity">
+                <option value="small">Small</option>
+                <option value="large">Large</option>
+                
+                
+              </select>
+            </div>
+
           </div>
         </div>
         <div class="card-footer d-flex justify-content-between">
@@ -323,7 +365,12 @@
             <span>Total Estimate (USD):</span>
             <span id="estimateTotal">$0</span>
           </div>
+
+          
         </div>
+
+        <input type="hidden" name="quote_breakdown" id="quote_breakdown">
+              <input type="hidden" name="quote_grandtotal" id="quote_grandtotal">
         <div class="card-footer d-flex justify-content-between">
           <button type="button" class="btn btn-outline-secondary btn-prev" data-prev="2">Back</button>
           <button type="button" class="btn btn-primary btn-next" data-next="4">Next</button>
@@ -343,7 +390,7 @@
           <div id="whiteLabelFields" style="display:none;">
             <div class="mb-3">
               <label class="form-label">Your Firm’s Additional Fees (USD)</label>
-              <input type="number" step="0.01" class="form-control" name="firm_fees">
+              <input type="number" step="0.01" class="form-control" name="firm_fees" id="firm_fees">
             </div>
             <div class="mb-3">
               <label class="form-label">Upload Your Firm Logo</label>
@@ -391,8 +438,41 @@
 </div>
 
 {{-- JS --}}
+
 <script>
+  
+</script>
+
+<script>
+
+
+ 
+  
 $(document).ready(function(){
+
+
+
+  $("[name='service']").change(function(){
+    var service = $(this).val();
+    if (service === "ep_validation") {
+
+    $("#translationTypeDiv").css("display", "block");
+ }
+  else {
+      $("#translationTypeDiv").css("display", "none");
+      $("[name='translation']").val("none");
+  }
+  });
+
+new TomSelect("#region",{
+    plugins:['remove_button'],
+    placeholder: "Select region",
+    searchField: ["text"],
+    create: false,
+    closeAfterSelect: true,
+  });
+console.log($('#region').val());
+
 
   function showStep(step){
     $(".step").addClass("d-none");
@@ -417,74 +497,521 @@ $(document).ready(function(){
   $(".btn-next").click(function(){ showStep($(this).data("next")); });
   $(".btn-prev").click(function(){ showStep($(this).data("prev")); });
 
-  function getPricingRule(){
-    let region = $("[name='region']").val();
-    let service = $("[name='service']").val();
-    return pricingRules.find(r => r.region === region && r.service === service) || null;
+  
+  /*
+  function getPricingRules(){
+    
+  let regions = $('#region').val();
+  console.log(regions);
+  let service = $("[name='service']").val();
+
+  let claims    = parseInt($("[name='claims']").val() || 0);
+  let pages     = parseInt($("[name='pages']").val() || 0);
+  let words     = parseInt($("[name='word_count']").val() || 0);
+  let drawings  = parseInt($("[name='drawings']").val() || 0);
+  let priority  = parseInt($("[name='priority']").val() || 0);
+
+  if(regions== "India")
+  {
+
+    let entity = $('#entity').val();
+    return pricingRules.filter(r =>
+    regions.includes(r.region) &&
+    r.service === service &&
+    (!entity || r.entity === entity) // match entity if defined
+  );
+ 
+
+  }else{
+
+  
+  return pricingRules.filter(r => regions.includes(r.region) && r.service === service);
+  }
+}
+*/
+
+
+function getPricingRules() {
+  const regionsRaw = $('#region').val() || [];
+  const service    = $("[name='service']").val() || '';
+  const pages      = parseInt($("[name='pages']").val() || 0, 10);
+  const claims     = parseInt($("[name='claims']").val() || 0, 10);
+  const priority   = parseInt($("[name='priority']").val() || 0, 10);
+  const entity     = $('#entity').val() || null;
+
+  if (!Array.isArray(pricingRules)) {
+    console.error('pricingRules not loaded. Check @json($pricingRules).');
+    return [];
   }
 
-  function calculateEstimate(){
-  let claims = parseInt($("[name='claims']").val()||0);
-  let pages  = parseInt($("[name='pages']").val()||0);
-  let drawings = parseInt($("[name='drawings']").val()||0);
-  let expedited = $("[name='expedited']").val();
-  let translation = $("[name='translation']").val();
-  let priority = $("[name='priority']").val();
+  const selectedRegions = Array.isArray(regionsRaw)
+    ? regionsRaw.map(r => String(r || '').trim()).filter(Boolean)
+    : [String(regionsRaw || '').trim()].filter(Boolean);
 
-  let rule = getPricingRule();
-  if(!rule){
-    $("#estimateSummary").html(`<p class="text-danger">⚠ No pricing rule found.</p>`);
+  if (selectedRegions.length === 0) return [];
+
+  // Step 1: filter by service, region (and entity only if India)
+  const filtered = pricingRules.filter(r => {
+    if (!r || !r.region) return false;
+
+    const rRegion  = String(r.region || '').trim().toLowerCase();
+    const rService = String(r.service || '');
+    const matchRegion = selectedRegions.some(sr => sr.trim().toLowerCase() === rRegion);
+
+    if (!matchRegion || rService !== service) return false;
+
+    // ✅ Only apply entity check for India
+    if (rRegion === 'india') {
+      return !entity || String(r.entity || '').toLowerCase() === entity.toLowerCase();
+    }
+
+    return true;
+  });
+
+  // Step 2: group by region
+  const groups = {};
+  filtered.forEach(r => {
+    const key = String(r.region || '').trim().toLowerCase();
+    groups[key] = groups[key] || [];
+    groups[key].push(r);
+  });
+
+  const finalRules = [];
+
+  // Step 3: pick correct rule based on thresholds
+  selectedRegions.forEach(rawRegion => {
+    const key = String(rawRegion || '').trim().toLowerCase();
+    const group = groups[key] || [];
+    if (group.length === 0) return;
+
+    if (group.length === 1) {
+      finalRules.push(group[0]);
+      return;
+    }
+
+    // Sort by thresholds
+    group.sort((a, b) => {
+      const pa = isFinite(parseFloat(a.pages_threshold)) ? parseFloat(a.pages_threshold) : Infinity;
+      const pb = isFinite(parseFloat(b.pages_threshold)) ? parseFloat(b.pages_threshold) : Infinity;
+      return pa - pb;
+    });
+
+    let chosen = null;
+
+    for (let i = 0; i < group.length; i++) {
+      const r = group[i];
+      const pTh  = parseFloat(r.pages_threshold) || 0;
+      const cTh  = parseFloat(r.claims_threshold) || 0;
+      const prTh = parseFloat(r.priority_threshold) || 0;
+
+      const matchesPages    = pages    <= pTh || !isFinite(pTh);
+      const matchesClaims   = claims   <= cTh || !isFinite(cTh);
+      const matchesPriority = priority <= prTh || !isFinite(prTh);
+
+      if (matchesPages && matchesClaims && matchesPriority) {
+        chosen = r;
+        break;
+      }
+    }
+
+    if (!chosen) chosen = group[group.length - 1];
+    finalRules.push(chosen);
+  });
+
+  return finalRules;
+}
+
+
+
+
+
+
+  function calculateEstimate(){
+  let claims    = parseInt($("[name='claims']").val() || 0);
+  let pages     = parseInt($("[name='pages']").val() || 0);
+  let words     = parseInt($("[name='word_count']").val() || 0);
+  let drawings  = parseInt($("[name='drawings']").val() || 0);
+  let priority  = parseInt($("[name='priority']").val() || 0);
+  let entity    = $("[name='entity']").val() || 'small' ;
+  let translation = $("[name='translation']").val() || 'none';
+
+  let rules = getPricingRules();
+
+  console.log('rules : '+ rules);
+
+  if(rules.length === 0){
+    $("#estimateSummary").html(`<p class="text-danger">⚠ No pricing rule found for selected region(s).</p>`);
     $("#estimateTotal").text(`$0.00`);
     $("#finalGrandTotal").text(`$0.00`);
     return;
   }
 
-  // Apply PF/TF levels
-  let filingFee = parseFloat(rule.filing_fee) + (parseFloat(rule.filing_fee) * (pfLevel/100));
-  let officialFee = parseFloat(rule.official_fee);
-  let translationFee = 0;
+  let grandTotal = 0;
+  let summaryHtml = "";
 
-  if(translation !== 'none'){
-    translationFee = pages * (
-      parseFloat(rule.translation_fee) + (parseFloat(rule.translation_fee) * (tfLevel/100))
-    );
+  let breakdown = [];
+
+
+
+  rules.forEach(rule => {
+    // Base filing fee with PF adjustment
+    let filingFee = parseFloat(rule.filing_fee || 0);
+    filingFee += filingFee * (pfLevel/100);
+
+    // Base official fee
+    let officialFee = parseFloat(rule.official_fee || 0);
+
+
+
+    // Translation fee (word count × rate with TF adjustment)
+    let translationFee = 0;
+    const service = $("[name='service']").val();
+
+    if (service === "ep_validation") {
+
+    $("#translationTypeDiv").css("display", "block");
+
+        
+
+        // Filing fee with PF EP adjustment
+      
+      filingFee = parseFloat(rule.filing_fee || 0);
+        // Filing fee → only PF EP adjustment
+        filingFee += filingFee * (pfLevelEp / 100);
+
+        // Translation fee → depends on type
+        let translationType = $("[name='translation']").val() || "";
+        if (translationType.toLowerCase() === "full") {
+            let perWord = parseFloat(rule.translation_fee || 0);
+            perWord += perWord * (tfLevelEp / 100);
+            translationFee = words * perWord;
+        } else if (translationType.toLowerCase() === "claims") {
+            let perClaim = parseFloat(rule.translation_fee || 0);
+            perClaim += perClaim * (tfLevelEp / 100);
+            translationFee = claims * perClaim;
+        } else {
+            translationFee = 0; // none
+        }
+
+        // ✅ Official fee + extra pages logic
+        let pagesExtra = 0;
+        if (rule.region && rule.region.toUpperCase() === "AUSTRIA") {
+            if (pages > (rule.pages_threshold || 0)) {
+                let extraBlocks = Math.ceil((pages - rule.pages_threshold) / 15);
+                pagesExtra = extraBlocks * parseFloat(rule.excess_page_fee || 0);
+            }
+        } else if (pages > (rule.pages_threshold || 0)) {
+            pagesExtra = (pages - rule.pages_threshold) * parseFloat(rule.excess_page_fee || 0);
+        }
+        officialFee += pagesExtra;
+
+    }
+
+
+
+
+else{
+
+
+    if(translation !== 'none' && words > 0){
+      let perWord = parseFloat(rule.translation_fee || 0);
+      perWord += perWord * (tfLevel/100);
+      translationFee = words * perWord;
+    }
+
+    // Add excess claim fees
+    
+
+    // Add excess page fees
+    // inside your rules.forEach(rule => { ... })
+
+// --- Pages special rules ---
+// --- Pages special rules ---
+let pagesExtra = 0;
+const country = (rule.region || "").toUpperCase().trim();
+
+// fallback FX rates
+const rates = {
+  EUR: 1.05,
+  KRW: 0.00078,
+  CNY: 0.14,
+  ILS: 0.27,
+  PHP: 0.018,
+  UAH: 0.027,
+  INR: 0.012,
+  DOP: 0.017,
+  USD: 1
+};
+
+switch (country) {
+  case "CHILE":
+    if (pages > 85) pagesExtra += (pages - 85) * (85 * rates.USD);
+    break;
+  case "CHINA":
+    if (pages > 30 && pages <= 300) {
+      pagesExtra += (pages - 30) * (50 * rates.CNY);
+    }
+    if (pages > 300) {
+      pagesExtra += (300 - 30) * (50 * rates.CNY);
+      pagesExtra += (pages - 300) * (100 * rates.CNY);
+    }
+    break;
+  case "INDIA":
+    if (pages > 30) pagesExtra += (pages - 30) * (800 * rates.INR);
+    break;
+  case "INDONESIA":
+    if (pages > 30) pagesExtra += (pages - 30) * (2 * rates.USD);
+    break;
+  case "ISRAEL":
+    if (pages > 100) {
+      let extraBlocks = Math.ceil((pages - 100) / 50);
+      pagesExtra += extraBlocks * (283 * rates.ILS);
+    }
+    break;
+  case "MEXICO":
+    if (pages > 30) pagesExtra += (pages - 30) * (4.5 * rates.USD);
+    break;
+  case "PHILIPPINES":
+    if (pages > 30) pagesExtra += (pages - 30) * (36 * rates.PHP);
+    break;
+  case "REPUBLIC OF KOREA":
+    if (pages > 20) pagesExtra += (pages - 20) * (1000 * rates.KRW);
+    break;
+  case "UKRAINE":
+    if (pages > 150) pagesExtra += (pages - 150) * (640 * rates.UAH);
+    break;
+  case "VIETNAM":
+    if (pages > 6) pagesExtra += (pages - 6) * (0.4 * rates.USD);
+    break;
+  case "EUROPE":
+    if (pages > 35) pagesExtra += (pages - 35) * (17 * rates.EUR);
+    break;
+  case "ARIPO":
+    if (pages > 30 && pages <= 100) {
+      pagesExtra += (pages - 30) * (20 * rates.USD);
+    }
+    if (pages > 100) {
+      pagesExtra += (100 - 30) * (20 * rates.USD);
+      pagesExtra += (pages - 100) * (30 * rates.USD);
+    }
+    break;
+  case "OAPI":
+    if (pages > 10 && pages <= 20) pagesExtra += 347 * rates.EUR;
+    if (pages > 20 && pages <= 30) pagesExtra += 642 * rates.EUR;
+    if (pages > 30 && pages <= 40) pagesExtra += 1120 * rates.EUR;
+    if (pages > 40) {
+      let bands = Math.ceil((pages - 40) / 10);
+      pagesExtra += (1120 + bands * 345) * rates.EUR;
+    }
+    break;
+  case "ALGERIA":
+    if (pages > 10) {
+      let blocks = Math.ceil((pages - 10) / 5);
+      pagesExtra += blocks * ((32 * 1.19 + 16) * rates.USD);
+    }
+    break;
+  case "ITALY":
+    if (pages > 50) pagesExtra += 150 * rates.EUR;
+    else if (pages > 20) pagesExtra += 100 * rates.EUR;
+    else if (pages > 10) pagesExtra += 50 * rates.EUR;
+    break;
+  case "DOMINICAN REPUBLIC":
+    if (pages > 30) pagesExtra += (pages - 30) * (75 * rates.DOP);
+    break;
+  default:
+    if (pages > (rule.pages_threshold || 0)) {
+      pagesExtra += (pages - rule.pages_threshold) * parseFloat(rule.excess_page_fee || 0);
+    }
+    break;
+}
+
+// add into official fee
+officialFee += pagesExtra;
+
+
+
+
+
+
+
+
+// --- Claims special rules ---
+let claimsExtra = 0;
+switch (country) {
+  case "CHINA":
+    if (claims > 10) claimsExtra += (claims - 10) * (150 * rates.CNY);
+    break;
+  case "INDIA":
+    if (claims > 10) claimsExtra += (claims - 10) * (1600 * rates.INR);
+    break;
+  case "ISRAEL":
+    if (claims > 50) claimsExtra += (claims - 50) * (581 * rates.ILS);
+    break;
+  case "PERU":
+    if (claims > 10) claimsExtra += (claims - 10) * (23.43 * rates.USD);
+    break;
+  case "PHILIPPINES":
+    if (claims > 5) claimsExtra += (claims - 5) * (360 * 1.09 * rates.PHP);
+    break;
+  case "UKRAINE":
+    if (claims > 3) claimsExtra += (claims - 3) * (160 * rates.UAH);
+    break;
+  case "VIETNAM":
+    if (claims > 1) claimsExtra += (claims - 1) * (9 * rates.USD);
+    break;
+  case "MALAYSIA":
+    if (claims > 10) claimsExtra += (claims - 10) * (7 * rates.USD);
+    break;
+  case "INDONESIA":
+    if (claims > 10) claimsExtra += (claims - 10) * (7 * rates.USD);
+    break;
+  case "ARIPO":
+    if (claims > 10) claimsExtra += (claims - 10) * (100 * rates.USD);
+    break;
+  case "OAPI":
+    if (claims > 11) claimsExtra += (claims - 11) * (131 * rates.EUR);
+    break;
+  case "ANGOLA":
+    if (claims > 15) claimsExtra += (claims - 15) * (8 * rates.EUR);
+    break;
+  case "MADAGASCAR":
+    if (claims > 10) claimsExtra += (claims - 10) * (78 * rates.USD);
+    break;
+  case "ITALY":
+    if (claims > 10) claimsExtra += (claims - 10) * (45 * rates.EUR);
+    break;
+  case "GERMANY":
+    if (claims > 10) claimsExtra += (claims - 10) * (30 * rates.EUR);
+    break;
+  case "AUSTRIA":
+    if (claims > 10) {
+      let blocks = Math.ceil((claims - 10) / 10);
+      claimsExtra += blocks * (104 * rates.EUR);
+    }
+    break;
+  case "SWEDEN":
+    if (claims > 10) claimsExtra += (claims - 10) * (150 * rates.EUR);
+    break;
+  case "ECUADOR":
+    if (claims > 10) claimsExtra += (claims - 10) * (56 * rates.USD);
+    break;
+  default:
+    if (claims > (rule.claims_threshold || 0)) {
+      claimsExtra += (claims - rule.claims_threshold) * parseFloat(rule.excess_claim_fee || 0);
+    }
+    break;
+}
+
+// add to official fee
+officialFee += claimsExtra;
+
+
+    // Add excess drawing fees (if defined)
+    /*
+    if(drawings > (rule.drawing_threshold || 0)){
+      let excessDrawings = drawings - rule.drawing_threshold;
+      officialFee += excessDrawings * parseFloat(rule.excess_drawing_fee || 0);
+    }
+    */
+
+    // Add priority claim fees (if defined)
+    // --- Priority claims special rules ---
+let priorityClaimsExtra = 0;
+
+if (priority > 1) {
+  let effectiveClaims = priority - 1; // Excel: $N$5 - 1
+  let feePerClaim = 0;
+
+  switch (country) {
+    case "UNITED REPUBLIC OF TANZANIA":
+      feePerClaim = 61; // already in USD
+      break;
+    case "MEXICO":
+      feePerClaim = 74; // USD
+      break;
+    case "CHINA":
+      feePerClaim = Math.ceil((80 * rates.CNY) / 5) * 5;
+      break;
+    case "INDIA":
+      if (entity === "small" || entity === "micro") {
+        feePerClaim = Math.ceil((1600 * rates.INR) / 5) * 5;
+      } else {
+        feePerClaim = Math.ceil((8000 * rates.INR) / 5) * 5;
+      }
+      break;
+    case "REPUBLIC OF KOREA":
+      feePerClaim = Math.ceil((18000 * rates.KRW) / 5) * 5;
+      break;
+    case "DOMINICAN REPUBLIC":
+      feePerClaim = Math.ceil((2645 * rates.DOP) / 5) * 5;
+      break;
+    default:
+      feePerClaim = parseFloat(rule.excess_priority_fee || 0);
+      break;
   }
 
-  // Extras (everything except translation)
-  let extras = 0;
-  if(claims > rule.claims_threshold) extras += (claims - rule.claims_threshold) * parseFloat(rule.excess_claim_fee);
-  if(pages > rule.pages_threshold) extras += (pages - rule.pages_threshold) * parseFloat(rule.excess_page_fee);
-  if(drawings > rule.drawing_small_threshold) extras += (drawings - rule.drawing_small_threshold) * parseFloat(rule.drawing_fee_small);
-  if(drawings > rule.drawing_large_threshold) extras += (drawings - rule.drawing_large_threshold) * parseFloat(rule.drawing_fee_large);
-  if(expedited==='yes') extras += parseFloat(rule.expedited_fee||0);
-  if(priority==='yes') extras += parseFloat(rule.priority_fee||0);
+  priorityClaimsExtra = effectiveClaims * feePerClaim;
+}
 
-  let subtotal = filingFee + officialFee + translationFee + extras;
-  let tax = subtotal * (parseFloat(rule.tax_percentage||0)/100);
-  let total = subtotal + tax;
+// add to official fee
+officialFee += priorityClaimsExtra;
 
-  let firmFees = 0; 
-  if($("#isWhiteLabel").is(":checked"))
-  { 
-    firmFees = parseFloat($("[name='firm_fees']").val() || 0); 
+  }
 
-  } 
-  let grandTotal = total + firmFees;
+  
+    // Total for this country
+    let rowTotal = translationFee + filingFee + officialFee;
+    grandTotal += rowTotal;
 
-  $("#estimateSummary").html(`
-    <p><strong>Filing Fee:</strong> $${filingFee.toFixed(2)}</p>
-    <p><strong>Official Fee:</strong> $${officialFee.toFixed(2)}</p>
-    <p><strong>Translation Fee:</strong> $${translationFee.toFixed(2)}</p>
-    <p><strong>Extras:</strong> $${extras.toFixed(2)}</p>
-    <p><strong>Tax (${tax}%):</strong> $${tax.toFixed(2)}</p>
-    ${firmFees > 0 ? `<p><strong>Your Firm Fees:</strong> $${firmFees.toFixed(2)}</p>` : ''}
-   
     
-  `);
 
+
+
+    // Summary row
+    summaryHtml += `
+      <div class="border rounded p-2 mb-2">
+        <strong>${rule.region}</strong><br>
+        Translation Fee: $${translationFee.toFixed(2)}<br>
+        Filing Fee: $${filingFee.toFixed(2)}<br>
+        Official Fee: $${officialFee.toFixed(2)}<br>
+        <span class="fw-bold">Total: $${rowTotal.toFixed(2)}</span>
+      </div>
+    `;
+
+    breakdown.push({
+       region: rule.region,
+       language : rule.language,
+    filing_fee: parseFloat(filingFee) || 0,
+    translation_fee: parseFloat(translationFee) || 0,
+    official_fee: parseFloat(officialFee) || 0,
+    extra_fee: parseFloat(rule.extra_fee) || 0,
+    tax: parseFloat(rule.tax) || 0,
+    total: parseFloat(rowTotal) || 0
+    });
+
+      
+  });
+
+  var firm_fee=$("#firm_fees").val() || 0;
+grandTotal += parseFloat(firm_fee);
+
+
+  // Update UI
+  $("#estimateSummary").html(summaryHtml);
   $("#estimateTotal").text(`$${grandTotal.toFixed(2)}`);
   $("#finalGrandTotal").text(`$${grandTotal.toFixed(2)}`);
+
+
+  // Save breakdown in hidden input for backend
+
+
+// Save grand total separately
+$("#quote_breakdown").val(JSON.stringify(breakdown));
+$("#quote_grandtotal").val(grandTotal.toFixed(2));
+
 }
+
+
 
 
   $("input,select").on("input change", calculateEstimate);
@@ -492,6 +1019,8 @@ $(document).ready(function(){
 
   $("#isWhiteLabel").on("change", function(){
     $("#whiteLabelFields").toggle(this.checked);
+    calculateEstimate();
+
   });
 
   const STORE_URL  = "{{ route('quotes.store.quick') }}";
@@ -541,6 +1070,9 @@ $(document).ready(function(){
         if(res.region) $("[name='region']").val(res.region.toUpperCase());
         if(res.filing_date) $("#estimateSummary").prepend(`<p><strong>Filing Date:</strong> ${res.filing_date}</p>`);
         if(res.priority_date) $("#estimateSummary").prepend(`<p><strong>Priority Date:</strong> ${res.priority_date}</p>`);
+        if(appNo.toUpperCase().startsWith("PCT")){
+            $("[name='service']").val("pct_national_phase").trigger("change");
+        }
     }).fail(function(){
         $("#wipoStatus").text("❌ Request failed.");
     });

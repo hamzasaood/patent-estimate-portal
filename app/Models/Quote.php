@@ -17,6 +17,7 @@ class Quote extends Model
     'fees_breakdown','special_instructions','attachment',
     'base_fee','extra_fee','tax','total','status','is_white_label','firm_fees','firm_logo','total_with_firm',
     'stripe_payment_intent','payment_status','stripe_session_id','filing_fee','translation_fee','official_fee','notes'
+    ,'word_count','invoice_group','language',
 ];
 
 

@@ -43,7 +43,7 @@
         @error('role') <small class="text-danger">{{ $message }}</small> @enderror
       </div>
      <div class="mb-3">
-        <label class="form-label">Patent Fee Level</label>
+        <label class="form-label">Patent Fee Level (Direct/PCT)</label>
             <select name="pf_level_id" class="form-select">
         <option value="">-- PF Level (Default Level 1) --</option>
         @foreach(\App\Models\PricingLevel::where('kind','pf')->get() as $lvl)
@@ -55,11 +55,39 @@
       
       </div>
     <div class="mb-3">
-        <label class="form-label">Translation Fee Level</label>
+        <label class="form-label">Translation Fee Level (Direct/PCT)</label>
         <select name="tf_level_id" class="form-select">
           <option value="">-- TF Level (Default Level 1) --</option>
           @foreach(\App\Models\PricingLevel::where('kind','tf')->get() as $lvl)
             <option value="{{ $lvl->id }}" {{ old('tf_level_id', $user->tf_level_id) == $lvl->id ? 'selected' : '' }}>
+              {{ $lvl->name }} ({{ $lvl->adjustment_percent }}%)
+            </option>
+          @endforeach
+        </select>
+    </div>
+
+
+
+
+
+    <div class="mb-3">
+        <label class="form-label">Patent Fee Level (EP_Validation)</label>
+            <select name="pfep_level_id" class="form-select">
+        <option value="">-- PF Level (Default Level 1) --</option>
+        @foreach(\App\Models\PricingLevel::where('kind','pfep')->get() as $lvl)
+          <option value="{{ $lvl->id }}" {{ old('pfep_level_id', $user->pfep_level_id) == $lvl->id ? 'selected' : '' }}>
+            {{ $lvl->name }} ({{ $lvl->adjustment_percent }}%)
+          </option>
+        @endforeach
+        </select>
+      
+      </div>
+    <div class="mb-3">
+        <label class="form-label">Translation Fee Level (EP_Validation)</label>
+        <select name="tfep_level_id" class="form-select">
+          <option value="">-- TF Level (Default Level 1) --</option>
+          @foreach(\App\Models\PricingLevel::where('kind','tfep')->get() as $lvl)
+            <option value="{{ $lvl->id }}" {{ old('tfep_level_id', $user->tfep_level_id) == $lvl->id ? 'selected' : '' }}>
               {{ $lvl->name }} ({{ $lvl->adjustment_percent }}%)
             </option>
           @endforeach

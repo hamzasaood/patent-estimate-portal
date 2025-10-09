@@ -65,3 +65,29 @@
 --}}
 <script src="{!! asset('assets/js/dashboard_init.js') !!}"></script>
 <script src="{!! asset('assets/js/custom.js') !!}"></script>
+  <script src="{{ asset('js/app.js') }}"></script>
+<script>
+  $('#pricing').DataTable({
+        pageLength: 10,
+        lengthMenu: [5, 10, 25, 50],
+        order: [[3, 'desc']],
+        responsive: true,
+        language: {
+            search: "_INPUT_",
+            searchPlaceholder: "🔍 Search quotes..."
+        }
+    });
+
+
+    $('#quotes').DataTable({
+        pageLength: 10,
+        lengthMenu: [5, 10, 25, 50],
+        order: [[3, 'desc']],
+        responsive: true,
+        language: {
+            search: "_INPUT_",
+            searchPlaceholder: "🔍 Search quotes..."
+        }
+    });
+
+</script>

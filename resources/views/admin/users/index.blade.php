@@ -24,8 +24,10 @@
       <th>Name</th>
       <th>Email</th>
       <th>Role</th>
-      <th>Pricing Level PF</th>
-      <th>Pricing Level TF</th>
+      <th>Pricing Level PF (Direct/PCT)</th>
+      <th>Pricing Level TF (Direct/PCT)</th>
+      <th>Pricing Level PF (EP_Validation)</th>
+      <th>Pricing Level TF (EP_Validation)</th>
       <th>Actions</th>
     </tr>
   </thead>
@@ -36,8 +38,12 @@
       <td>{{ $user->name }}</td>
       <td>{{ $user->email }}</td>
       <td><span class="badge bg-{{ $user->role=='admin'?'danger':'secondary' }}">{{ ucfirst($user->role) }}</span></td>
+      
       <td>{{ $user->pfLevel->name .' / ' .$user->pfLevel->adjustment_percent . '%'  }}</td>
       <td>{{ $user->tfLevel->name .' / ' .$user->tfLevel->adjustment_percent . '%'  }}</td>
+
+      <td>{{ $user->pfLevelep->name .' / ' .$user->pfLevelep->adjustment_percent . '%'  }}</td>
+      <td>{{ $user->tfLevelep->name .' / ' .$user->tfLevelep->adjustment_percent . '%'  }}</td>
       <td>
         <a href="{{ route('users.edit',$user) }}" class="btn btn-sm btn-warning">Edit</a>
         <form action="{{ route('users.destroy',$user) }}" method="POST" class="d-inline">

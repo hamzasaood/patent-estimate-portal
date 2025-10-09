@@ -145,7 +145,7 @@
     <option value="Thailand" {{ old('region',$pricing_logic->region ?? '')=='Thailand' ? 'selected' : '' }}>Thailand</option>
     <option value="Trinidad and Tobago" {{ old('region',$pricing_logic->region ?? '')=='Trinidad and Tobago' ? 'selected' : '' }}>Trinidad and Tobago</option>
     <option value="Tunisia" {{ old('region',$pricing_logic->region ?? '')=='Tunisia' ? 'selected' : '' }}>Tunisia</option>
-    <option value="Türkiye" {{ old('region',$pricing_logic->region ?? '')=='Türkiye' ? 'selected' : '' }}>Türkiye</option>
+    <option value="Türkiye" {{ old('region',$pricing_logic->region ?? '')=='Türkiye' || 'Turkey'  ? 'selected' : '' }}>Türkiye</option>
     <option value="Turkmenistan" {{ old('region',$pricing_logic->region ?? '')=='Turkmenistan' ? 'selected' : '' }}>Turkmenistan</option>
     <option value="Uganda" {{ old('region',$pricing_logic->region ?? '')=='Uganda' ? 'selected' : '' }}>Uganda</option>
     <option value="Ukraine" {{ old('region',$pricing_logic->region ?? '')=='Ukraine' ? 'selected' : '' }}>Ukraine</option>
@@ -176,6 +176,22 @@
       <option value="ep_validation" {{ old('service',$pricing_logic->service ?? '')=='ep_validation' ? 'selected' : '' }}>EP Validation</option>
       <option value="recordal" {{ old('service',$pricing_logic->service ?? '')=='recordal' ? 'selected' : '' }}>Recordal / Assignment</option>
       <option value="provisional_refusal" {{ old('service',$pricing_logic->service ?? '')=='provisional_refusal' ? 'selected' : '' }}>Provisional Refusal</option>
+    </select>
+    @error('service') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+  </div>
+
+
+
+
+{{-- translation --}}
+  <div class="mb-3 col-md-4">
+    <label class="form-label">Translation</label>
+    <select name="translation" class="form-select" required>
+      <option value="">Select...</option>
+      <option value="claims" {{ old('service',$pricing_logic->translation ?? '')=='claims' ? 'selected' : '' }}>Only Claims</option>
+      <option value="full" {{ old('service',$pricing_logic->translation ?? '')=='full' ? 'selected' : '' }}>Full Translation</option>
+      <option value="no" {{ old('service',$pricing_logic->translation ?? '')=='' ? 'selected' : '' }}>No Translation</option>
+      
     </select>
     @error('service') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
   </div>

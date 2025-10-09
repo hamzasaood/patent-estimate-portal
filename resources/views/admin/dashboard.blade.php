@@ -15,27 +15,10 @@
     margin-bottom: 2rem;
   }
   .dashboard-header h3 { font-weight: 700; }
-  .last-updated {
-    font-size: 0.9rem;
-    color: rgba(255,255,255,0.85);
-    margin-top: .5rem;
-  }
-  .refresh-btn {
-    background: rgba(255,255,255,0.15);
-    border: none;
-    padding: 4px 10px;
-    border-radius: 6px;
-    color: white;
-    cursor: pointer;
-    font-size: 0.85rem;
-    margin-left: 10px;
-    transition: background 0.3s ease;
-  }
-  .refresh-btn:hover {
-    background: rgba(255,255,255,0.3);
-  }
-  .stat-card { background: white; border-radius: 12px; padding: 1.5rem;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05); position: relative; transition: all 0.3s ease; }
+  .last-updated { font-size: 0.9rem; color: rgba(255,255,255,0.85); margin-top: .5rem; }
+  .refresh-btn { background: rgba(255,255,255,0.15); border: none; padding: 4px 10px; border-radius: 6px; color: white; cursor: pointer; font-size: 0.85rem; margin-left: 10px; transition: background 0.3s ease; }
+  .refresh-btn:hover { background: rgba(255,255,255,0.3); }
+  .stat-card { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.05); position: relative; transition: all 0.3s ease; }
   .stat-card:hover { transform: translateY(-5px); box-shadow: 0 8px 18px rgba(0,0,0,0.12); }
   .stat-card h3 { font-size: 1.8rem; margin-bottom: .5rem; color: #333; }
   .stat-card p { margin: 0; font-size: .9rem; color: #666; }
@@ -48,13 +31,7 @@
   .bg-gradient-6 { border-left: 5px solid #dc3545; }
   .white_card { background: #fff; border-radius: 12px; box-shadow: 0 3px 10px rgba(0,0,0,0.05); padding: 1rem; }
   .white_card_header h5 { font-weight: 600; margin-bottom: 1rem; }
-  #recentQuotes li, #recentLogs li {
-    border: none;
-    border-left: 4px solid #4F708E;
-    margin-bottom: 8px;
-    border-radius: 6px;
-    background: #f9fafc;
-  }
+  table.recent-table th, table.recent-table td { font-size: 0.9rem; }
 </style>
 
 <div class="container-fluid px-0">
@@ -72,21 +49,21 @@
     <div><i class="bi bi-speedometer2 fs-1"></i></div>
   </div>
 
-  {{-- Stats --}}
+  {{-- Counters --}}
   <div class="row g-3">
     <div class="col-md-4 col-xl-2"><div class="stat-card bg-gradient-1"><h3 id="totalQuotes">0</h3><p>Total Quotes</p><i class="bi bi-file-earmark-text stat-icon"></i></div></div>
-    <div class="col-md-4 col-xl-2"><div class="stat-card bg-gradient-2"><h3 id="pendingQuotes">0</h3><p>Pending</p><i class="bi bi-hourglass-split stat-icon"></i></div></div>
-    <div class="col-md-4 col-xl-2"><div class="stat-card bg-gradient-3"><h3 id="completedQuotes">0</h3><p>Completed</p><i class="bi bi-check2-circle stat-icon"></i></div></div>
+    <div class="col-md-4 col-xl-2"><div class="stat-card bg-gradient-2"><h3 id="pendingQuotes">0</h3><p>Pending Payment</p><i class="bi bi-hourglass-split stat-icon"></i></div></div>
+    <div class="col-md-4 col-xl-2"><div class="stat-card bg-gradient-3"><h3 id="completedQuotes">0</h3><p>Paid</p><i class="bi bi-check2-circle stat-icon"></i></div></div>
     <div class="col-md-4 col-xl-2"><div class="stat-card bg-gradient-4"><h3 id="users">0</h3><p>Users</p><i class="bi bi-people stat-icon"></i></div></div>
     <div class="col-md-4 col-xl-2"><div class="stat-card bg-gradient-5"><h3 id="admins">0</h3><p>Admins</p><i class="bi bi-shield-lock stat-icon"></i></div></div>
     <div class="col-md-4 col-xl-2"><div class="stat-card bg-gradient-6"><h3 id="pricingRules">0</h3><p>Pricing Rules</p><i class="bi bi-gear stat-icon"></i></div></div>
   </div>
 
-  {{-- Charts --}}
+  {{-- Charts Row 1 --}}
   <div class="row mt-4">
     <div class="col-lg-6">
       <div class="white_card">
-        <div class="white_card_header"><h5>Quotes Breakdown</h5></div>
+        <div class="white_card_header"><h5>Quotes Breakdown by Status</h5></div>
         <div class="white_card_body"><canvas id="quotesChart"></canvas></div>
       </div>
     </div>
@@ -98,31 +75,61 @@
     </div>
   </div>
 
-  {{-- Recent --}}
+  {{-- Charts Row 2 --}}
   <div class="row mt-4">
     <div class="col-lg-6">
       <div class="white_card">
-        <div class="white_card_header"><h5>Recent Quotes</h5></div>
-        <div class="white_card_body"><ul class="list-group" id="recentQuotes"></ul></div>
+        <div class="white_card_header"><h5>Quotes by Language</h5></div>
+        <div class="white_card_body"><canvas id="languageChart"></canvas></div>
       </div>
     </div>
     <div class="col-lg-6">
       <div class="white_card">
-        <div class="white_card_header"><h5>Recent Admin Actions</h5></div>
-        <div class="white_card_body"><ul class="list-group" id="recentLogs"></ul></div>
+        <div class="white_card_header"><h5>Monthly Quotes Trend</h5></div>
+        <div class="white_card_body"><canvas id="monthlyChart"></canvas></div>
       </div>
     </div>
   </div>
+
+  {{-- Pricing Levels --}}
+  <div class="col-lg-12 mt-4">
+    <div class="white_card">
+      <div class="white_card_header"><h5>Users by Pricing Levels (TF & PF)</h5></div>
+      <div class="white_card_body"><canvas id="pricingChart" height="120"></canvas></div>
+    </div>
+  </div>
+
+  {{-- Recent Quotes Table --}}
+  <div class="col-lg-12 mt-4">
+    <div class="white_card">
+      <div class="white_card_header"><h5>Recent Quotes (Grouped)</h5></div>
+      <div class="white_card_body">
+        <table class="table table-striped recent-table">
+          <thead>
+            <tr>
+              <th>Invoice Group</th>
+              <th>Region(s)</th>
+              <th>Service</th>
+              <th>Status</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody id="recentQuotesTable"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-let quotesChart, jurisdictionChart;
+let quotesChart, jurisdictionChart, languageChart, monthlyChart, pricingChart;
 
 function loadDashboardData(){
     $.get("{{ route('admin.dashboard.data') }}", function(res){
 
-        // Stats
+        // Counters
         $("#totalQuotes").text(res.stats.totalQuotes);
         $("#pendingQuotes").text(res.stats.pendingQuotes);
         $("#completedQuotes").text(res.stats.completedQuotes);
@@ -130,69 +137,76 @@ function loadDashboardData(){
         $("#admins").text(res.stats.admins);
         $("#pricingRules").text(res.stats.pricingRules);
 
-        // Recent Quotes
-        let rq = '';
+        // Recent Quotes Table
+        let rows = '';
         res.recentQuotes.forEach(q=>{
-            rq += `<li class="list-group-item d-flex justify-content-between">
-              <span>#${q.id} - ${q.application_type}</span>
-              <span class="badge bg-${q.status=='completed'?'success':(q.status=='pending'?'warning':'danger')}">${q.status}</span>
-            </li>`;
+            rows += `<tr>
+              <td>${q.invoice_group}</td>
+              <td>${q.regions}</td>
+              <td>${q.service}</td>
+              <td><span class="badge bg-${q.status=='paid'?'success':(q.status=='pending_payment'?'warning':'info')}">${q.status}</span></td>
+              <td>${q.created_at}</td>
+            </tr>`;
         });
-        $("#recentQuotes").html(rq || '<li class="list-group-item">No recent quotes</li>');
+        $("#recentQuotesTable").html(rows || '<tr><td colspan="5" class="text-center text-muted">No quotes</td></tr>');
 
-        // Recent Logs
-        /*
-        let rl = '';
-        res.recentLogs.forEach(l=>{
-            rl += `<li class="list-group-item d-flex justify-content-between">
-              <span>${l.admin_name} updated ${l.module}</span>
-              <small class="text-muted">${l.created_at}</small>
-            </li>`;
-        });
-        $("#recentLogs").html(rl || '<li class="list-group-item">No recent logs</li>');
+        // Reset charts
+        [quotesChart, jurisdictionChart, languageChart, monthlyChart, pricingChart].forEach(c=>c && c.destroy());
 
-        */
-
-        // Update Charts
-        if(quotesChart){ quotesChart.destroy(); }
-        if(jurisdictionChart){ jurisdictionChart.destroy(); }
-
+        // Quotes Breakdown
         quotesChart = new Chart(document.getElementById('quotesChart'), {
             type: 'doughnut',
             data: {
-                labels: ['Pending','Completed','Rejected'],
+                labels: ['Pending Payment','Paid','Quoted'],
                 datasets: [{
-                    data: [res.stats.pendingQuotes,res.stats.completedQuotes,res.stats.rejectedQuotes],
-                    backgroundColor: ['#ffc107','#28a745','#dc3545']
+                    data: [res.stats.pendingQuotes,res.stats.completedQuotes,res.stats.quotedQuotes],
+                    backgroundColor: ['#ffc107','#28a745','#17a2b8']
                 }]
             },
             options: { plugins:{legend:{position:'bottom'}} }
         });
 
+        // Jurisdiction
         jurisdictionChart = new Chart(document.getElementById('jurisdictionChart'), {
             type: 'bar',
-            data: {
-                labels: Object.keys(res.jurisdictions),
-                datasets: [{
-                    label: 'Quotes',
-                    data: Object.values(res.jurisdictions),
-                    backgroundColor: '#4F708E'
-                }]
-            },
+            data: { labels: Object.keys(res.jurisdictions), datasets:[{ data:Object.values(res.jurisdictions), backgroundColor:'#4F708E' }] },
             options: { scales:{y:{beginAtZero:true}} }
         });
 
-        // Update "Last Updated"
-        let now = new Date();
-        let timeString = now.toLocaleTimeString();
-        $("#lastUpdated").text(timeString);
+        // Languages
+        languageChart = new Chart(document.getElementById('languageChart'), {
+            type: 'pie',
+            data: { labels: Object.keys(res.languages), datasets:[{ data:Object.values(res.languages), backgroundColor:['#6f42c1','#20c997','#fd7e14','#0dcaf0'] }] },
+            options: { plugins:{legend:{position:'bottom'}} }
+        });
+
+        // Monthly Trend
+        monthlyChart = new Chart(document.getElementById('monthlyChart'), {
+            type: 'line',
+            data: { labels: Object.keys(res.monthly), datasets:[{ label:'Quotes', data:Object.values(res.monthly), borderColor:'#4F708E', fill:true, backgroundColor:'rgba(79,112,142,0.2)' }] },
+            options: { scales:{y:{beginAtZero:true}} }
+        });
+
+        // Pricing Levels
+        let labels = res.pricingLevels.map(l => `${l.kind} - ${l.label}`);
+        let data = res.pricingLevels.map(l => l.users);
+        let colors = res.pricingLevels.map(l => l.kind === 'TF' ? '#4F708E' : '#28a745');
+
+        pricingChart = new Chart(document.getElementById('pricingChart'), {
+            type: 'bar',
+            data: { labels: labels, datasets:[{ label:'Users', data:data, backgroundColor:colors }] },
+            options: { scales:{y:{beginAtZero:true}}, plugins:{legend:{display:false}} }
+        });
+
+        // Update time
+        $("#lastUpdated").text(new Date().toLocaleTimeString());
     });
 }
 
 $(document).ready(function(){
-    loadDashboardData(); // Initial load
-    setInterval(loadDashboardData, 30000); // Auto-refresh every 30s
-    $("#refreshNow").click(loadDashboardData); // Manual refresh
+    loadDashboardData();
+    setInterval(loadDashboardData, 30000);
+    $("#refreshNow").click(loadDashboardData);
 });
 </script>
 @endsection

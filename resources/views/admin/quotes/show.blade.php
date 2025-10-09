@@ -1,163 +1,190 @@
 @extends('admin.layout.app')
 
 @section('content')
-<div class="container-fluid py-4">
+<style>
+@media print {
+  #downloadPdf { display: none !important; }
+  #downloadExcel { display: none !important; }
+}
 
-    {{-- Page Title --}}
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold text-dark">Quote #{{ $quote->id }} Details</h2>
-        <a href="{{ route('quotes.index') }}" class="btn btn-outline-secondary">
-            ← Back to Quotes
-        </a>
-    </div>
+</style>
+<div class="container">
+<div class="container-fluid py-4" id="invoicePdf">
 
-    {{-- Status & Totals --}}
-    <div class="row g-4 mb-4">
-        <div class="col-md-4">
-            <div class="card shadow-sm border-0 h-100">
-                <div class="card-body text-center">
-                    <h6 class="text-uppercase text-muted fw-semibold">Status</h6>
-                    <span class="badge fs-6 px-4 py-2 mt-2
-                        @if($quote->status=='paid') bg-success
-                        @elseif($quote->status=='pending') bg-warning text-dark
-                        @elseif($quote->status=='quoted') bg-info
-                        @else bg-secondary @endif">
-                        {{ ucfirst($quote->status) }}
-                    </span>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card shadow-sm border-0 h-100">
-                <div class="card-body text-center">
-                    <h6 class="text-uppercase text-muted fw-semibold">System Total</h6>
-                    <h3 class="fw-bold text-primary mt-2">${{ number_format($quote->total,2) }}</h3>
-                </div>
-            </div>
-        </div>
-        @if($quote->is_white_label)
-        <div class="col-md-4">
-            <div class="card shadow-sm border-0 h-100">
-                <div class="card-body text-center">
-                    <h6 class="text-uppercase text-muted fw-semibold">With Firm Fees</h6>
-                    <h3 class="fw-bold text-success mt-2">${{ number_format($quote->total_with_firm,2) }}</h3>
-                </div>
-            </div>
-        </div>
+  {{-- Header --}}
+  <table class="w-100 mb-4" style="border-collapse: collapse; table-layout: fixed;">
+    <tr>
+      {{-- Logo --}}
+      <td style="width:220px; border:1px solid #3d6a86; text-align:center; background:#fff;">
+        @if($q0->firm_logo)
+          <img src="{{ asset($q0->firm_logo) }}" alt="logo" style="max-height:60px;">
+        @else
+          <img src="{{ asset('/logo.png') }}" alt="Logo" style="max-height:60px;">
         @endif
-    </div>
+      </td>
 
-    {{-- Application Details --}}
-    <div class="card shadow-sm border-0 mb-4">
-        <div class="card-header bg-white border-bottom">
-            <h5 class="fw-bold text-dark mb-0">📄 Application Details</h5>
-        </div>
-        <div class="card-body row g-3">
-            <div class="col-md-6"><span class="text-muted">Service:</span> <strong>{{ ucfirst(str_replace('_',' ',$quote->service)) }}</strong></div>
-            <div class="col-md-6"><span class="text-muted">Region:</span> <strong>{{ strtoupper($quote->region) }}</strong></div>
-            <div class="col-md-6"><span class="text-muted">Application #:</span> <strong>{{ $quote->application_number ?? '-' }}</strong></div>
-            <div class="col-md-6"><span class="text-muted">Reference #:</span> <strong>{{ $quote->reference_number ?? '-' }}</strong></div>
-            <div class="col-md-6"><span class="text-muted">Title:</span> <strong>{{ $quote->title ?? '-' }}</strong></div>
-            <div class="col-md-6"><span class="text-muted">Applicant:</span> <strong>{{ $quote->applicant ?? '-' }}</strong></div>
-            <div class="col-md-4"><span class="text-muted">Claims:</span> <strong>{{ $quote->claims }}</strong></div>
-            <div class="col-md-4"><span class="text-muted">Pages:</span> <strong>{{ $quote->pages }}</strong></div>
-            <div class="col-md-4"><span class="text-muted">Drawings:</span> <strong>{{ $quote->drawings ?? 0 }}</strong></div>
-        </div>
-    </div>
+      {{-- Cost Estimate --}}
+      <td style="width:120px; border:1px solid #3d6a86; background:#8ea9bb; color:#1f3b4a; font-weight:600; text-align:center;">
+        COST ESTIMATE
+      </td>
 
-    {{-- Dates --}}
-    <div class="card shadow-sm border-0 mb-4">
-        <div class="card-header bg-white border-bottom">
-            <h5 class="fw-bold text-dark mb-0">📅 Key Dates</h5>
-        </div>
-        <div class="card-body row g-3">
-            <div class="col-md-3"><span class="text-muted">Priority Date:</span><br><strong>{{ optional($quote->priority_date)->format('d M Y') }}</strong></div>
-            <div class="col-md-3"><span class="text-muted">Filing Date:</span><br><strong>{{ optional($quote->filing_date)->format('d M Y') }}</strong></div>
-            <div class="col-md-3"><span class="text-muted">Deadline (30m):</span><br><strong>{{ optional($quote->deadline_30m)->format('d M Y') }}</strong></div>
-            <div class="col-md-3"><span class="text-muted">Deadline (31m):</span><br><strong>{{ optional($quote->deadline_31m)->format('d M Y') }}</strong></div>
-        </div>
-    </div>
+      {{-- Client Name --}}
+      <td style="border:1px solid #3d6a86; background:#cfe6ee; color:#113842; text-align:center;">
+        <div style="font-weight:700; font-size:11px;">Client Name:</div>
+        <div style="font-size:11px;">{{ $q0->applicant ?? ($user->name ?? 'Client') }}</div>
+      </td>
 
-    {{-- Fees --}}
-    <div class="card shadow-sm border-0 mb-4">
-        <div class="card-header bg-white border-bottom">
-            <h5 class="fw-bold text-dark mb-0">💰 Fees Summary</h5>
-        </div>
-        <div class="card-body">
-            <table class="table table-hover align-middle">
-                <tbody>
-                    <tr><td>Filing Fee</td><td class="text-muted">${{ number_format($quote->filing_fee,2) }}</td></tr>
-                    <tr><td>Translation Fee</td><td class="text-muted">${{ number_format($quote->translation_fee,2) }}</td></tr>
-                    <tr><td>Official Fee</td><td class="text-muted">${{ number_format($quote->official_fee,2) }}</td></tr>
-                    <tr><td class="text-muted">Extra Fee</td><td class="fw-bold">${{ number_format($quote->extra_fee,2) }}</td></tr>
-                    <tr><td class="text-muted">Tax</td><td class="fw-bold">${{ number_format($quote->tax,2) }}</td></tr>
-                    <tr class="table-light">
-                        <td class="fw-bold">Total</td>
-                        <td class="fw-bold text-primary">${{ number_format($quote->total,2) }}</td>
-                    </tr>
-                </tbody>
-            </table>
+      {{-- Service --}}
+      <td style="border:1px solid #3d6a86; background:#cfe6ee; color:#113842; text-align:center;">
+        <div style="font-weight:700; font-size:11px;">{{ ucfirst(str_replace('_',' ',$q0->service)) }}</div>
+        <div style="font-size:11px;">Entry</div>
+      </td>
 
-            @if($quote->fees_breakdown)
-            <h6 class="fw-bold mt-3">Detailed Breakdown</h6>
-            <ul class="list-group">
-                @foreach($quote->fees_breakdown as $key => $val)
-                    <li class="list-group-item d-flex justify-content-between">
-                        <span>{{ ucfirst(str_replace('_',' ',$key)) }}</span>
-                        <strong>${{ number_format($val,2) }}</strong>
-                    </li>
-                @endforeach
-            </ul>
-            @endif
-        </div>
-    </div>
+      {{-- Emuna Ref --}}
+      <td style="width:220px; border:1px solid #3d6a86; background:#cfe6ee; color:#113842; text-align:center;">
+        <div style="font-weight:700;">Emuna IP Ref:</div>
+        <div style="font-size:11px;">{{ $groupId }}</div>
+      </td>
 
-    {{-- Special Instructions --}}
-    @if($quote->special_instructions)
-    <div class="card shadow-sm border-0 mb-4">
-        <div class="card-header bg-white border-bottom">
-            <h5 class="fw-bold text-dark mb-0">📝 Special Instructions</h5>
-        </div>
-        <div class="card-body">
-            <p class="mb-0">{{ $quote->special_instructions }}</p>
-        </div>
-    </div>
-    @endif
+      {{-- Client Ref --}}
+      <td style="width:180px; border:1px solid #3d6a86; background:#cfe6ee; color:#113842; text-align:center;">
+        <div style="margin-top:6px; font-weight:700;">Client Ref:</div>
+        <div style="font-size:11px;">{{ $q0->reference_number ?? '-' }}</div>
+      </td>
+    </tr>
+  </table>
 
-    {{-- Attachment --}}
-    @if($quote->attachment)
-    <div class="card shadow-sm border-0 mb-4">
-        <div class="card-header bg-white border-bottom">
-            <h5 class="fw-bold text-dark mb-0">📎 Attachment</h5>
-        </div>
-        <div class="card-body">
-            <a href="{{ asset($quote->attachment) }}" target="_blank" class="btn btn-outline-primary">
-                View / Download Attachment
-            </a>
-        </div>
-    </div>
-    @endif
+  {{-- Application Details --}}
+  <h5 style="color:#2d5568; font-weight:700; margin-bottom:12px;">Application Details</h5>
+  <table class="table table-bordered" style="font-size:11px;">
+    <tbody>
+      <tr>
+        <td class="fw-bold">Estimate Date</td>
+        <td>{{ $q0->created_at->format('d M Y') }}</td>
+        <td class="fw-bold">Revised Date</td>
+        <td>-</td>
+      </tr>
+      <tr>
+        <td class="fw-bold">Application Number</td>
+        <td>{{ $q0->application_number ?? '-' }}</td>
+        <td class="fw-bold">Applicant</td>
+        <td>{{ $q0->applicant ?? '-' }}</td>
+      </tr>
+      <tr>
+        <td class="fw-bold">Title</td>
+        <td colspan="3">{{ $q0->title ?? '-' }}</td>
+      </tr>
+      <tr>
+        <td class="fw-bold">Language</td>
+        <td>{{ $q0->language ?? ($q0->translation ?? '-') }}</td>
+        <td class="fw-bold">Pages</td>
+        <td>{{ $q0->pages ?? '-' }}</td>
+      </tr>
+      <tr>
+        <td class="fw-bold">Priority Date</td>
+        <td>{{ optional($q0->priority_date)->format('d M Y') ?? '-' }}</td>
+        <td class="fw-bold">Claims</td>
+        <td>{{ $q0->claims ?? '-' }}</td>
+      </tr>
+      <tr>
+        <td class="fw-bold">International Filing Date</td>
+        <td>{{ optional($q0->filing_date)->format('d M Y') ?? '-' }}</td>
+        <td class="fw-bold">Drawings</td>
+        <td>{{ $q0->drawings ?? 0 }}</td>
+      </tr>
+      <tr>
+        <td class="fw-bold">30-Month Deadline</td>
+        <td>{{ $q0->deadline_30m ?? '-' }}</td>
+        <td class="fw-bold">31-Month Deadline</td>
+        <td>{{ $q0->deadline_31m ?? '-' }}</td>
+      </tr>
+      <tr>
+        
+        <td class="fw-bold">Pirority Claims</td>
+        <td colspan="3">{{ $q0->priority ?? '-' }}</td>
+      </tr>
+    </tbody>
+  </table>
 
-    {{-- White Label Info --}}
-    @if($quote->is_white_label)
-    <div class="card shadow-sm border-0 mb-4">
-        <div class="card-header bg-white border-bottom">
-            <h5 class="fw-bold text-dark mb-0">🏢 White Label Info</h5>
-        </div>
-        <div class="card-body row g-3">
-            <div class="col-md-4"><span class="text-muted">Firm Fees:</span><br><strong>${{ number_format($quote->firm_fees,2) }}</strong></div>
-            <div class="col-md-4"><span class="text-muted">Firm ID:</span><br><strong>{{ $quote->firm_id }}</strong></div>
-            <div class="col-md-4">
-                <span class="text-muted">Firm Logo:</span><br>
-                @if($quote->firm_logo)
-                    <img src="{{ asset($quote->firm_logo) }}" alt="Firm Logo" class="img-thumbnail mt-2" style="max-height:90px;">
-                @else
-                    <span class="text-muted">No logo uploaded</span>
-                @endif
-            </div>
-        </div>
-    </div>
-    @endif
-
+  {{-- Fees Table --}}
+  <h5 style="color:#2d5568; font-weight:700; margin:18px 0 10px;">Filing and Translation Fees</h5>
+  <table class="table table-bordered" style="font-size:11px;">
+    <thead class="table-dark">
+      <tr>
+        <th>Country</th>
+        <th>Language</th>
+        <th>Filing Fee</th>
+        <th>Translation Fee</th>
+        <th>Official Fee</th>
+        <th class="text-end">Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      @foreach($quotes as $q)
+      <tr>
+        <td>{{ $q->region }}</td>
+        <td>{{ $q->language ?? ($q->translation ?? '-') }}</td>
+        <td>${{ number_format($q->filing_fee ?? 0, 2) }}</td>
+        <td>
+          @if($q->translation_fee > 0)
+            ${{ number_format($q->translation_fee,2) }}
+          @else
+            -
+          @endif
+        </td>
+        <td>${{ number_format($q->official_fee ?? 0, 2) }}</td>
+        <td class="text-end">
+          ${{ number_format($q->is_white_label && $q->total_with_firm ? $q->total_with_firm : $q->total, 2) }}
+        </td>
+      </tr>
+      @endforeach
+    </tbody>
+    <tfoot class="table-light">
+      <tr>
+        <td colspan="5" class="text-end">Total Estimate:</td>
+        <td class="text-end">${{ number_format($grandTotal, 2) }}</td>
+      </tr>
+    </tfoot>
+  </table>
+   {{-- Notes --}}
+  <p class="small text-muted mt-2">
+    {!! $q0->notes ?? '* Official fees include government charges, exchange rate adjustments, and disbursements.' !!}
+    Translation fees are estimates — final amounts may vary based on actual text length.  
+    This estimate does not guarantee patentability. Rush fees may apply if deadlines are tight.';
+    
+    
+  </p>
 </div>
+ 
+
+  {{-- Export Buttons --}}
+  <div class="text-end mt-4 no-print">
+    <button id="downloadPdf" class="btn btn-danger me-2">📄 Download PDF</button>
+    <button id="downloadExcel" class="btn btn-success">📊 Download Excel</button>
+  </div>
+</div>
+
+{{-- Scripts --}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<script>
+document.getElementById('downloadPdf').addEventListener('click', function () {
+    const element = document.getElementById('invoicePdf');
+    const opt = {
+        margin: [0.2, 0.2, 0.2, 0.2],
+        filename: 'Invoice_Group_{{ $groupId }}.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 3, useCORS: true, scrollY: 0 },
+        jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' }
+    };
+    html2pdf().set(opt).from(element).save();
+});
+
+document.getElementById('downloadExcel').addEventListener('click', function () {
+    let wb = XLSX.utils.book_new();
+    let ws = XLSX.utils.table_to_sheet(document.querySelector("table.table-bordered"));
+    XLSX.utils.book_append_sheet(wb, ws, "Invoice");
+    XLSX.writeFile(wb, "Invoice_Group_{{ $groupId }}.xlsx");
+});
+</script>
 @endsection

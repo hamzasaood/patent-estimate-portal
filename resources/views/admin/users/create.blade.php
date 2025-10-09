@@ -42,7 +42,7 @@
       </div>
 
       <div class="mb-3">
-        <label class="form-label">Patent Fee Level</label>
+        <label class="form-label">Patent Fee Level (Direct/PCT)</label>
             <select name="pf_level_id" class="form-select">
         <option value="">-- PF Level (Default Level 1) --</option>
         @foreach(\App\Models\PricingLevel::where('kind','pf')->get() as $lvl)
@@ -54,10 +54,41 @@
       
       </div>
     <div class="mb-3">
-        <label class="form-label">translation Fee Level</label>
+        <label class="form-label">translation Fee Level (Direct/PCT)</label>
         <select name="tf_level_id" class="form-select">
           <option value="">-- TF Level (Default Level 1) --</option>
           @foreach(\App\Models\PricingLevel::where('kind','tf')->get() as $lvl)
+            <option value="{{ $lvl->id }}" >
+              {{ $lvl->name }} ({{ $lvl->adjustment_percent }}%)
+            </option>
+          @endforeach
+        </select>
+    </div>
+
+
+
+
+
+
+
+
+    <div class="mb-3">
+        <label class="form-label">Patent Fee Level (EP_Validation)</label>
+            <select name="pfep_level_id" class="form-select">
+        <option value="">-- PF Level (Default Level 1) --</option>
+        @foreach(\App\Models\PricingLevel::where('kind','pfep')->get() as $lvl)
+          <option value="{{ $lvl->id }}" >
+            {{ $lvl->name }} ({{ $lvl->adjustment_percent }}%)
+          </option>
+        @endforeach
+        </select>
+      
+      </div>
+    <div class="mb-3">
+        <label class="form-label">translation Fee Level (EP_Validation)</label>
+        <select name="tfep_level_id" class="form-select">
+          <option value="">-- TF Level (Default Level 1) --</option>
+          @foreach(\App\Models\PricingLevel::where('kind','tfep')->get() as $lvl)
             <option value="{{ $lvl->id }}" >
               {{ $lvl->name }} ({{ $lvl->adjustment_percent }}%)
             </option>

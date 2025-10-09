@@ -15,8 +15,11 @@
             <label class="form-label">Kind/Type</label>
             <select name="kind" class="form-select" required>
       <option value=""  >Select...</option>
-      <option value="pf" {{ old('kind',$pricingLevel->kind ?? '')=='pf' ? 'selected' : '' }}>Patent Filling Fee Level</option>
-      <option value="tf" {{ old('kind',$pricingLevel->kind ?? '')=='tf' ? 'selected' : '' }}>Translation Fee Level</option>
+      <option value="pf" {{ old('kind',$pricingLevel->kind ?? '')=='pf' ? 'selected' : '' }}>Patent Filling Fee Level (Direct/PCT)</option>
+      <option value="tf" {{ old('kind',$pricingLevel->kind ?? '')=='tf' ? 'selected' : '' }}>Translation Fee Level (Direct/PCT)</option>
+
+      <option value="pfep" {{ old('kind',$pricingLevel->kind ?? '')=='pfep' ? 'selected' : '' }}>Patent Filling Fee Level (EP_Validation)</option>
+      <option value="tfep" {{ old('kind',$pricingLevel->kind ?? '')=='tfep' ? 'selected' : '' }}>Translation Fee Level (EP_Validation)</option>
       
     </select>
         </div>

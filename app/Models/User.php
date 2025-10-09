@@ -25,6 +25,8 @@ class User extends Authenticatable
         'pricing_level',
         'pf_level_id',
         'tf_level_id',
+        'pfep_level_id',
+        'tfep_level_id',
     ];
 
     /**
@@ -64,5 +66,16 @@ class User extends Authenticatable
     public function tfLevel()
     {
         return $this->belongsTo(PricingLevel::class, 'tf_level_id');
+    }
+
+
+    public function pfLevelep()
+    {
+        return $this->belongsTo(PricingLevel::class, 'pfep_level_id');
+    }
+
+    public function tfLevelep()
+    {
+        return $this->belongsTo(PricingLevel::class, 'tfep_level_id');
     }
 }

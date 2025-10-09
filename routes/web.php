@@ -45,6 +45,8 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
+
+
 Route::middleware(['auth','admin'])->prefix('admin')->group(function () {
     Route::view('/dashboard', 'admin.dashboard')->name('admin.dashboard');
     Route::get('dashboard/data', [QuotesController::class,'data'])->name('admin.dashboard.data');
@@ -55,6 +57,9 @@ Route::middleware(['auth','admin'])->prefix('admin')->group(function () {
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
 
     Route::resource('pricing-levels', PricingLevelController::class);
+
+    Route::get('/settings', [App\Http\Controllers\Admin\SettingController::class, 'edit'])->name('admin.settings.edit');
+    Route::post('/settings', [App\Http\Controllers\Admin\SettingController::class, 'update'])->name('admin.settings.update');
 });
 
 Route::get('/api/wipo/{appNo}', function($appNo){

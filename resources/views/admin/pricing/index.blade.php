@@ -1,6 +1,8 @@
 @extends('admin.layout.app')
 
 @section('content')
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+
 <div class="container">
     <div class="d-flex justify-content-between mb-3">
         <h2>Pricing Logics</h2>
@@ -10,8 +12,8 @@
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
-
-    <table class="table table-bordered">
+    <div class="table-responsive">
+    <table class="table table-bordered" id="pricing">
         <thead class="table-dark">
             <tr>
                 <th>Service</th>
@@ -55,6 +57,13 @@
         </tbody>
     </table>
 
-    {{ $logics->links() }}
 </div>
+
+    
+</div>
+<script>
+
+
+
+</script>
 @endsection
