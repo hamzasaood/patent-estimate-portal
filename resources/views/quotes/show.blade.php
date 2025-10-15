@@ -120,6 +120,7 @@
 /* Hide only in PDF export */
 @media print {
   #downloadPdf { display: none !important; }
+  #downloadExcel { display: none !important; }
 }
 @media print {
   #quotePdf {
@@ -146,11 +147,19 @@
   }
 }
 
+
 </style>
 
 
 <div id="quotePdf">
 <div class="container py-4">
+
+  @if(session('success'))
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    {{ session('success') }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+@endif
 
   {{-- Fancy top header similar to PDF --}}
   {{-- Fancy top header similar to PDF --}}
@@ -159,9 +168,9 @@
     <!-- Logo -->
     <td style="width:100px; border:1px solid #3d6a86; text-align:center; background:#fff; vertical-align:middle;">
       @if($q0->firm_logo)
-        <img src="{{ asset($q0->firm_logo) }}" alt="logo" style="max-height:50px;">
+        <img src="{{ asset($q0->firm_logo) }}" alt="logo" style="max-height:50px; max-width:90px;">
       @else
-        <img src="{{ asset('/logo.png') }}" alt="Emuna IP Logo" style="max-height:50px;">
+        <img src="{{ asset('/logo.png') }}" alt="Emuna IP Logo" style="max-height:50px; max-width:90px;">
       @endif
     </td>
 
@@ -322,21 +331,30 @@
   <button id="downloadPdf" class="btn btn-danger px-4">
     <i class="bi bi-file-earmark-pdf"></i> Download PDF
   </button>
+  <button id="downloadExcel" class="btn btn-success px-4">
+    <i class="bi bi-file-earmark-excel"></i> Download Excel
+  </button>
+
 </div>
 
 </div>
 
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
 
 <script>
 document.getElementById('downloadPdf').addEventListener('click', function () {
     const element = document.getElementById('quotePdf');
-    const btn = document.getElementById('downloadPdf');
+    const btn = document.getElementById('downloadPdf'); 
+    const btn1 = document.getElementById('downloadExcel');
+
+
     
     // Hide button before export
     btn.style.display = 'none';
+    btn1.style.display = 'none';
 
     const opt = {
         margin:       [0.2, 0.2, 0.2, 0.2],
@@ -349,10 +367,18 @@ document.getElementById('downloadPdf').addEventListener('click', function () {
     html2pdf().set(opt).from(element).save().then(() => {
         // Show button again after download
         btn.style.display = 'inline-block';
+        btn1.style.display = 'inline-block';
     });
 });
+document.getElementById('downloadExcel').addEventListener('click', function () {
+   
+
+    let wb = XLSX.utils.book_new();
+    let ws = XLSX.utils.table_to_sheet(document.querySelector("#quotePdf"));
+    XLSX.utils.book_append_sheet(wb, ws, "Invoice");
+    XLSX.writeFile(wb, "Invoice_Group_{{ $groupId }}.xlsx");
+});
+
+
 </script>
-
-
-
 @endsection

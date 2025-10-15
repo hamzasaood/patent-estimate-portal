@@ -38,7 +38,6 @@
         <label class="form-label">Role</label>
         <select name="role" class="form-select" required>
           <option value="user" {{ old('role',$user->role)=='user'?'selected':'' }}>User</option>
-          <option value="admin" {{ old('role',$user->role)=='admin'?'selected':'' }}>Admin</option>
         </select>
         @error('role') <small class="text-danger">{{ $message }}</small> @enderror
       </div>

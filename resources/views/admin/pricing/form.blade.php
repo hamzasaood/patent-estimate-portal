@@ -145,7 +145,10 @@
     <option value="Thailand" {{ old('region',$pricing_logic->region ?? '')=='Thailand' ? 'selected' : '' }}>Thailand</option>
     <option value="Trinidad and Tobago" {{ old('region',$pricing_logic->region ?? '')=='Trinidad and Tobago' ? 'selected' : '' }}>Trinidad and Tobago</option>
     <option value="Tunisia" {{ old('region',$pricing_logic->region ?? '')=='Tunisia' ? 'selected' : '' }}>Tunisia</option>
-    <option value="Türkiye" {{ old('region',$pricing_logic->region ?? '')=='Türkiye' || 'Turkey'  ? 'selected' : '' }}>Türkiye</option>
+
+    <option value="Türkiye" {{ (old('region', $pricing_logic->region ?? '') == 'Türkiye' || old('region', $pricing_logic->region ?? '') == 'Turkey') ? 'selected' : '' }}>Türkiye</option>
+
+
     <option value="Turkmenistan" {{ old('region',$pricing_logic->region ?? '')=='Turkmenistan' ? 'selected' : '' }}>Turkmenistan</option>
     <option value="Uganda" {{ old('region',$pricing_logic->region ?? '')=='Uganda' ? 'selected' : '' }}>Uganda</option>
     <option value="Ukraine" {{ old('region',$pricing_logic->region ?? '')=='Ukraine' ? 'selected' : '' }}>Ukraine</option>
@@ -198,8 +201,8 @@
 
   {{-- Country --}}
   <div class="mb-3 col-md-4">
-    <label class="form-label">Country</label>
-    <input type="text" name="country" class="form-control" value="{{ old('country', $pricing_logic->country ?? '') }}" placeholder="e.g. United States" required>
+    <label class="form-label">Country Code</label>
+    <input type="text" name="country" class="form-control" value="{{ old('country', $pricing_logic->country ?? '') }}" placeholder="e.g. US" required>
     @error('country') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
   </div>
 

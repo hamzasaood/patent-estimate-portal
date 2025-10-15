@@ -340,7 +340,7 @@ $tfLevelEp = auth()->user()->tfLevelep->adjustment_percent ?? 0;
               <label class="form-label">Entity type</label>
               <select class="form-select" name="entity" id="entity">
                 <option value="small">Small</option>
-                <option value="large">Large</option>
+                <option value="large" selected>Large</option>
                 
                 
               </select>

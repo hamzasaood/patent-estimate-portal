@@ -248,7 +248,7 @@ public function store(Request $request)
     }
 
     // Common group id
-    $invoiceGroup = 'EIP' . rand(1000, 999999);
+    $invoiceGroup = 'EIP25-' . rand(1000, 999999);
 
 
     // WIPO fetch (only once for all)
@@ -291,7 +291,7 @@ public function store(Request $request)
             'claims'           => $data['claims'],
             'pages'            => $data['pages'],
             'drawings'         => $data['drawings'],
-            'word_count'       => $dat['word_count'],
+            'word_count'       => $data['word_count'],
             'special_instructions' => $data['special_instructions'] ?? null,
             'attachment'       => $attachmentPath,
 
@@ -330,7 +330,7 @@ public function store(Request $request)
         ]);
     }
 
-    return redirect()->route('quotes.show.quick', $invoiceGroup);
+    return redirect()->route('quotes.show.quick', $invoiceGroup)->with('success', 'Thank You! Quote created successfully. You can now download the PDF or Excel version of your quote.');
 }
 
 
@@ -385,7 +385,7 @@ public function saveQuoteFromRequest(Request $request, $status = 'quoted')
     }
 
     // Common group id
-    $invoiceGroup = 'EIP' . rand(1000, 999999);
+    $invoiceGroup = 'EIP25-' . rand(1000, 999999);
 
     // WIPO fetch (only once for all)
     $wipoData = null;

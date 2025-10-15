@@ -27,9 +27,11 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6|confirmed',
-            'role' => 'required|in:user,admin',
+            //'role' => 'required|in:user,admin',
             'pf_level_id' => 'nullable|exists:pricing_levels,id',
             'tf_level_id' => 'nullable|exists:pricing_levels,id',
+            'pfep_level_id' => 'nullable|exists:pricing_levels,id',
+            'tfep_level_id' => 'nullable|exists:pricing_levels,id',
         ]);
 
         $data['password'] = Hash::make($data['password']);
@@ -48,9 +50,11 @@ class UserController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,'.$user->id,
-            'role' => 'required|in:user,admin',
+            //'role' => 'required|in:user,admin',
             'pf_level_id' => 'nullable|exists:pricing_levels,id',
             'tf_level_id' => 'nullable|exists:pricing_levels,id',
+            'pfep_level_id' => 'nullable|exists:pricing_levels,id',
+            'tfep_level_id' => 'nullable|exists:pricing_levels,id',
             'password' => 'nullable|min:6|confirmed',
         ]);
 
