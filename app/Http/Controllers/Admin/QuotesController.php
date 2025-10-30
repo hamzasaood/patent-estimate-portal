@@ -7,6 +7,7 @@ use App\Models\Quote;
 use App\Models\User;
 use App\Models\PricingLogic;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 
 use Illuminate\Http\Request;
@@ -20,6 +21,7 @@ class QuotesController extends Controller
             'invoice_group',
             'service',
             'user_id',
+            \DB::raw('MAX(firm_fees) as firm_fees'),
             \DB::raw('GROUP_CONCAT(region SEPARATOR ", ") as regions'),
             \DB::raw('SUM(total_with_firm) as total_with_firm'),
             \DB::raw('SUM(total) as total'),
@@ -59,7 +61,30 @@ class QuotesController extends Controller
     }
 
 
+public function fetchall()
+{
+    // ✅ Fetch all quotes (you can modify the query as needed)
+    $quotes = Quote::select(
+            'invoice_group',
+            'service',
+            'user_id',
+            \DB::raw('GROUP_CONCAT(region SEPARATOR ", ") as regions'),
+            \DB::raw('SUM(total_with_firm) as total_with_firm'),
+            \DB::raw('SUM(total) as total'),
+            \DB::raw('MAX(status) as status'),
+            \DB::raw('MAX(title) as title'),
+            \DB::raw('MAX(created_at) as created_at')
+        )
+        ->with('user') // eager load user
+        ->groupBy('invoice_group','service','user_id')
+        ->where('created_at', '>=', Carbon::now()->subDay())
+        ->latest('created_at')
+         
+        ->get();
 
+    // ✅ Return as JSON for your JS
+    return response()->json($quotes);
+}
 
 
     public function destroy($groupId)

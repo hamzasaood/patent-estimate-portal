@@ -7,13 +7,20 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
+
 class UserController extends Controller
 {
     public function index()
     {
+        if(auth()->user()->email=='superadmin@gmail.com'){
+            $users = User::with('pfLevel','tfLevel')->where('role', '=', 'admin')->where('email', '!=', 'superadmin@gmail.com')->get();
+            return view('admin.users.index', compact('users'));
+        }
+        else{
         $users = User::with('pfLevel','tfLevel')->where('role', '!=', 'admin')->get();
         //dd($users);
         return view('admin.users.index', compact('users'));
+        }
     }
 
     public function create()

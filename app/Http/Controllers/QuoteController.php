@@ -222,7 +222,7 @@ public function store(Request $request)
         'attachment'         => 'nullable|file|max:5120',
 
         'expedited'          => 'nullable|string',
-        'translation'        => 'nullable|string',
+        'translation'        => 'nullable',
         'priority'           => 'nullable',
 
         // White label
@@ -230,6 +230,10 @@ public function store(Request $request)
         'firm_fees'          => 'nullable|numeric|min:0',
         'firm_logo'          => 'nullable|image|max:2048',
         'word_count'         => 'nullable',
+        'filing_date'       => 'nullable|date',
+        'priority_date'    => 'nullable|date',
+        '30_deadline'    => 'nullable|date',
+        '31_deadline'    => 'nullable|date',
 
         // New — frontend will send all regions + fees here
         'quote_breakdown'  => 'required|json',
@@ -296,8 +300,11 @@ public function store(Request $request)
             'attachment'       => $attachmentPath,
 
             'expedited'        => $data['expedited'] ?? '0',
-            'translation'      => $data['translation'] ?? 'none',
+            'translation' => isset($data['translation'])
+    ? implode(',', $data['translation'])
+    : 'none',
             'priority'         => $data['priority'],
+            
 
             // Fees (from breakdown JSON)
             'filing_fee'      => $row['filing_fee'],
@@ -310,16 +317,16 @@ public function store(Request $request)
             'status'          => 'quoted',
 
             // WIPO
-            'priority_date'=> $wipoData['priority_date'] ?? null,
-            'filing_date'  => $wipoData['filing_date'] ?? null,
-            'deadline_30m' => $wipoData['deadline_30m'] ?? null,
-            'deadline_31m' => $wipoData['deadline_31m'] ?? null,
+            'priority_date'=> $data['priority_date'] ?? null,
+            'filing_date'  => $data['filing_date'] ?? null,
+            'deadline_30m' => $data['30_deadline'] ?? null,
+            'deadline_31m' => $data['31_deadline'] ?? null,
 
             // White Label
             'is_white_label'  => $isWhiteLabel,
             'firm_fees'       => $firmFees,
             'firm_logo'       => $firmLogo,
-            'total_with_firm' => $row['total'] + $firmFees,
+            'total_with_firm' => $row['total'],
             'firm_id'         => $isWhiteLabel ? Auth::id() : null,
             'notes'           => $row['special_rules'] ?? null,
             'language'        => $row['language'],
@@ -359,7 +366,7 @@ public function saveQuoteFromRequest(Request $request, $status = 'quoted')
         'attachment'         => 'nullable|file|max:5120',
 
         'expedited'          => 'nullable|string',
-        'translation'        => 'nullable|string',
+        'translation'        => 'nullable',
         'priority'           => 'nullable',
 
         // White label
@@ -367,6 +374,10 @@ public function saveQuoteFromRequest(Request $request, $status = 'quoted')
         'firm_fees'          => 'nullable|numeric|min:0',
         'firm_logo'          => 'nullable|image|max:2048',
         'word_count'         => 'nullable',
+        'filing_date'       => 'nullable|date',
+        'priority_date'    => 'nullable|date',
+        '30_deadline'    => 'nullable|date',
+        '31_deadline'    => 'nullable|date',
 
         // New — frontend will send all regions + fees here
         'quote_breakdown'  => 'required|json',
@@ -432,7 +443,9 @@ public function saveQuoteFromRequest(Request $request, $status = 'quoted')
             'attachment'       => $attachmentPath,
 
             'expedited'        => $data['expedited'] ?? '0',
-            'translation'      => $data['translation'] ?? 'none',
+            'translation' => isset($data['translation'])
+    ? implode(',', $data['translation'])
+    : 'none',
             'priority'         => $data['priority'],
 
             // Fees (from breakdown JSON)
@@ -446,16 +459,16 @@ public function saveQuoteFromRequest(Request $request, $status = 'quoted')
             'status'          => $status,
 
             // WIPO
-            'priority_date'=> $wipoData['priority_date'] ?? null,
-            'filing_date'  => $wipoData['filing_date'] ?? null,
-            'deadline_30m' => $wipoData['deadline_30m'] ?? null,
-            'deadline_31m' => $wipoData['deadline_31m'] ?? null,
+             'priority_date'=> $data['priority_date'] ?? null,
+            'filing_date'  => $data['filing_date'] ?? null,
+            'deadline_30m' => $data['30_deadline'] ?? null,
+            'deadline_31m' => $data['31_deadline'] ?? null,
 
             // White Label
             'is_white_label'  => $isWhiteLabel,
             'firm_fees'       => $firmFees,
             'firm_logo'       => $firmLogo,
-            'total_with_firm' => $row['total'] + $firmFees,
+            'total_with_firm' => $row['total'],
             'firm_id'         => $isWhiteLabel ? Auth::id() : null,
             'notes'           => $row['special_rules'] ?? null,
             'language'        => $row['language'],
@@ -465,6 +478,8 @@ public function saveQuoteFromRequest(Request $request, $status = 'quoted')
            // 'pricing_json'    => json_encode($row), // save raw JSON for reference
         ]);
     }
+
+    
 
     return $invoiceGroup;
 }

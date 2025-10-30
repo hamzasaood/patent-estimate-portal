@@ -14,7 +14,7 @@
             <table class="table table-hover " id="quotes">
                 <thead class="table-dark">
                     <tr>
-                        <th>#Group</th>
+                        <th>#Application Number</th>
                         <th>User</th>
                         <th>Service</th>
                         <th>Regions</th>
@@ -35,7 +35,7 @@
                            
                             <td>
                                 <strong>
-                                    ${{ number_format($quote->total_with_firm > 0 ? $quote->total_with_firm : $quote->total, 2) }}
+                                    ${{ number_format($quote->total_with_firm > 0 ? $quote->total_with_firm + $quote->firm_fees : $quote->total, 2) }}
                                 </strong>
                             </td>
                             <td>
@@ -50,10 +50,10 @@
                             </td>
                             <td>{{ \Carbon\Carbon::parse($quote->created_at)->format('d M Y') }}</td>
                             <td>
-                                <a href="{{ route('quotes.show', $quote->invoice_group) }}" class="btn btn-sm btn-outline-primary">
+                                <a href="{{ route('admin.backend.quotes.show', $quote->invoice_group) }}" class="btn btn-sm btn-outline-primary">
                                     <i class="fa-solid fa-eye"></i>
                                 </a>
-                                <form action="{{ route('quotes.destroy', $quote->invoice_group) }}" method="POST" style="display:inline-block;">
+                                <form action="{{ route('admin.backend.quotes.destroy', $quote->invoice_group) }}" method="POST" style="display:inline-block;">
                                     @csrf @method('DELETE')
                                     <button type="submit" onclick="return confirm('Delete this group of quotes?')" class="btn btn-sm btn-outline-danger">
                                         <i class="fa-solid fa-trash"></i>

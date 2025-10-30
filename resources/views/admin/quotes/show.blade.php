@@ -137,12 +137,22 @@
           ${{ number_format($q->is_white_label && $q->total_with_firm ? $q->total_with_firm : $q->total, 2) }}
         </td>
       </tr>
+
+      @php
+        $fee = $q->firm_fees ?? 0;
+      @endphp
       @endforeach
     </tbody>
     <tfoot class="table-light">
+      @if($q->is_white_label && $q->total_with_firm)
+      <tr>
+        <td colspan="5" class="text-end">Firm Fee:</td>
+        <td class="text-end">${{ number_format($q0->firm_fees, 2) }}</td>
+      </tr>
+      @endif
       <tr>
         <td colspan="5" class="text-end">Total Estimate:</td>
-        <td class="text-end">${{ number_format($grandTotal, 2) }}</td>
+        <td class="text-end">${{ number_format($grandTotal + $fee, 2) }}</td>
       </tr>
     </tfoot>
   </table>

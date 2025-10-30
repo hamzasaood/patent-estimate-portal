@@ -66,6 +66,8 @@
 <script src="{!! asset('assets/js/dashboard_init.js') !!}"></script>
 <script src="{!! asset('assets/js/custom.js') !!}"></script>
   <script src="{{ asset('js/app.js') }}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
 <script>
   $('#pricing').DataTable({
         pageLength: 10,
@@ -89,5 +91,65 @@
             searchPlaceholder: "🔍 Search quotes..."
         }
     });
+
+
+
+
+    function fetchLiveOrders() {
+    $.ajax({
+        url: '/admin/new-quotes/', // Full route path
+        type: 'GET',
+        success: function(data) {
+            var notificationBody = $('.ordernotificationbody');
+            var orderCount = $('#order-count');
+            
+            // Clear current notifications
+            notificationBody.empty();
+
+            if (data.length === 0) {
+                notificationBody.append(`
+                    <div class="text-center py-2 text-muted">
+                        No new quotes available.
+                    </div>
+                `);
+                orderCount.text(0);
+                return;
+            }
+
+            // Loop through each quote and show notification
+            data.forEach(function(quote) {
+                notificationBody.append(`
+                    <div class="single_notify d-flex align-items-center" id="quote-${quote.id}">
+                        <div class="notify_thumb">
+                            <i class="fa-solid fa-calculator" style="font-size: 40px;"></i>
+                        </div>
+                        <a href="/admin/quotes/${quote.invoice_group}">
+                        <div class="notify_content">
+                            
+                        <h5>New Quote #${quote.invoice_group} - ${quote.service ? quote.service : 'Service'}</h5>
+                            
+                            <p>Region: ${quote.regions ? quote.regions : 'N/A'}</p>
+                            <p>Received ${moment(quote.created_at).fromNow()}</p>
+                        </div>
+                        </a>
+                    </div>
+                    <hr>
+                `);
+            });
+
+            // Update the count
+            orderCount.text(data.length);
+        },
+        error: function(xhr) {
+            console.error('Error fetching quotes:', xhr.responseText);
+        }
+    });
+}
+
+    // Call the function to fetch new orders every 5 seconds
+    setInterval(fetchLiveOrders, 5000); // Fetch data every 5 seconds
+
+    // Toggle sound on click of the bell icon
+    
 
 </script>

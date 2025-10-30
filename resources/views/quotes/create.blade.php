@@ -57,10 +57,8 @@ $tfLevelEp = auth()->user()->tfLevelep->adjustment_percent ?? 0;
   {{-- Stepper --}}
   <div class="d-flex justify-content-between mb-4">
     <div class="step-indicator"><span class="badge bg-primary">1</span><br><small>Application Details</small></div>
-    <div class="step-indicator"><span class="badge bg-secondary">2</span><br><small>Fees & Options</small></div>
-    <div class="step-indicator"><span class="badge bg-secondary">3</span><br><small>Summary</small></div>
-    <div class="step-indicator"><span class="badge bg-secondary">4</span><br><small>White Label</small></div>
-    <div class="step-indicator"><span class="badge bg-secondary">5</span><br><small>Payment</small></div>
+    <div class="step-indicator"><span class="badge bg-secondary">3</span><br><small>White Label</small></div>
+    <div class="step-indicator"><span class="badge bg-secondary">4</span><br><small>Payment</small></div>
   </div>
 
   {{-- Progress bar --}}
@@ -83,7 +81,7 @@ $tfLevelEp = auth()->user()->tfLevelep->adjustment_percent ?? 0;
             </div>
             <div class="col-md-6">
               <label class="form-label">Application Title</label>
-              <input type="text" class="form-control" name="title">
+              <input type="text" class="form-control" name="title" id="title">
             </div>
             <div class="col-md-6">
               <label class="form-label">Reference Number</label>
@@ -91,7 +89,7 @@ $tfLevelEp = auth()->user()->tfLevelep->adjustment_percent ?? 0;
             </div>
             <div class="col-md-6">
               <label class="form-label">Applicant Name</label>
-              <input type="text" class="form-control" name="applicant">
+              <input type="text" class="form-control" name="applicant" id="applicant">
             </div>
             <div class="col-md-6">
               <label class="form-label">Region</label>
@@ -273,7 +271,7 @@ $tfLevelEp = auth()->user()->tfLevelep->adjustment_percent ?? 0;
             </div>
             <div class="col-md-6" style="display:none;" id="translationTypeDiv">
               <label class="form-label">Translation Type</label>
-              <select class="form-select" name="translation" required>
+              <select class="form-select" id="translation" name="translation[]" required multiple>
                 <option value="none">No Translation</option>
                 <option value="full">Full Translation</option>
                 <option value="claims">Claims Only</option>
@@ -281,20 +279,67 @@ $tfLevelEp = auth()->user()->tfLevelep->adjustment_percent ?? 0;
             </div>
             <div class="col-md-6">
               <label class="form-label">Word Count</label>
-              <input type="number" class="form-control" name="word_count" min="0" placeholder="Enter total words">
+              <input type="number" class="form-control" name="word_count" id="word_count" min="0" placeholder="Enter total words">
             </div>
             <div class="col-md-6">
               <label class="form-label">Number of Claims</label>
-              <input type="number" class="form-control" name="claims" required>
+              <input type="number" class="form-control" name="claims" id="claims" required>
             </div>
             <div class="col-md-6">
               <label class="form-label">Number of Pages</label>
-              <input type="number" class="form-control" name="pages" required>
+              <input type="number" class="form-control" name="pages" id="pages" required>
             </div>
             <div class="col-md-6">
               <label class="form-label">Number of Pages of Drawings</label>
-              <input type="number" class="form-control" name="drawings">
+              <input type="number" class="form-control" name="drawings" id="drawings">
             </div>
+            <div class="col-md-6">
+              <label class="form-label">International Filing Date</label>
+              <input type="date" class="form-control" name="filing_date" id="filing_date" placeholder="month/year/day (e.g., 2023-12-31)">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Priority Date</label>
+              <input type="date" class="form-control" name="priority_date" id="priority_date" placeholder="month/year/day (e.g., 2023-12-31)">
+            </div>
+
+            
+              <input type="hidden" class="form-control" name="30_deadline" id="30_deadline" placeholder="month/year/day (e.g., 2023-12-31)">
+            
+              <input type="hidden" class="form-control" name="31_deadline" id="31_deadline" placeholder="month/year/day (e.g., 2023-12-31)">
+            
+
+
+
+
+            <div class="row g-3">
+            
+            
+            <div class="col-md-6 priority">
+              <label class="form-label">number of priority claims</label>
+              <select class="form-select" name="priority">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                
+              </select>
+            </div>
+
+              <div class="col-md-6 entity">
+              <label class="form-label">Entity type</label>
+              <select class="form-select" name="entity" id="entity">
+                <option value="small">Small</option>
+                <option value="large" selected>Large</option>
+                <option value="micro">Micro</option>
+                
+              </select>
+            </div>
+
+          </div>
             <div class="col-md-12">
               <label class="form-label">Special Instructions</label>
               <textarea class="form-control" name="special_instructions" rows="3"></textarea>
@@ -311,75 +356,18 @@ $tfLevelEp = auth()->user()->tfLevelep->adjustment_percent ?? 0;
         </div>
         <div class="card-footer text-end">
           <button type="button" class="btn btn-primary btn-next" data-next="2">Next</button>
+                    <button type="submit" class="btn btn-success btn-lg" id="btnInstruct">Instruct Now</button>
+
         </div>
       </div>
     </div>
 
-    {{-- STEP 2 --}}
-    <div class="step step-2 d-none">
-      <div class="card mb-4">
-        <div class="card-body">
-          <div class="row g-3">
-            
-            
-            <div class="col-md-6">
-              <label class="form-label">number of priority claims</label>
-              <select class="form-select" name="priority">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                
-              </select>
-            </div>
+   
 
-              <div class="col-md-6">
-              <label class="form-label">Entity type</label>
-              <select class="form-select" name="entity" id="entity">
-                <option value="small">Small</option>
-                <option value="large" selected>Large</option>
-                
-                
-              </select>
-            </div>
-
-          </div>
-        </div>
-        <div class="card-footer d-flex justify-content-between">
-          <button type="button" class="btn btn-outline-secondary btn-prev" data-prev="1">Back</button>
-          <button type="button" class="btn btn-primary btn-next" data-next="3">Next</button>
-        </div>
-      </div>
-    </div>
-
-    {{-- STEP 3 --}}
-    <div class="step step-3 d-none">
-      <div class="card mb-4">
-        <div class="card-body">
-          <h5 class="fw-bold mb-3">Estimate Summary</h5>
-          <div id="estimateSummary" class="mb-3"></div>
-          <div class="d-flex justify-content-between fs-5 fw-bold">
-            <span>Total Estimate (USD):</span>
-            <span id="estimateTotal">$0</span>
-          </div>
-
-          
-        </div>
-
-        <input type="hidden" name="quote_breakdown" id="quote_breakdown">
-              <input type="hidden" name="quote_grandtotal" id="quote_grandtotal">
-        <div class="card-footer d-flex justify-content-between">
-          <button type="button" class="btn btn-outline-secondary btn-prev" data-prev="2">Back</button>
-          <button type="button" class="btn btn-primary btn-next" data-next="4">Next</button>
-        </div>
-      </div>
-    </div>
+    
 
     {{-- STEP 4 --}}
-    <div class="step step-4 d-none">
+    <div class="step step-2 d-none">
       <div class="card mb-4">
         <div class="card-body">
           <h5 class="fw-bold mb-3">White Label Options (Optional)</h5>
@@ -399,33 +387,38 @@ $tfLevelEp = auth()->user()->tfLevelep->adjustment_percent ?? 0;
           </div>
         </div>
         <div class="card-footer d-flex justify-content-between">
-          <button type="button" class="btn btn-outline-secondary btn-prev" data-prev="3">Back</button>
-          <button type="button" class="btn btn-primary btn-next" data-next="5">Next</button>
+          <button type="button" class="btn btn-outline-secondary btn-prev" data-prev="1">Back</button>
+          <button type="button" class="btn btn-primary btn-next" data-next="3">Next</button>
         </div>
       </div>
     </div>
 
     {{-- STEP 5 --}}
-    <div class="step step-5 d-none">
+    <div class="step step-3 d-none">
       <div class="card mb-4">
         <div class="card-body">
           <h5 class="fw-bold mb-3">Finalize & Payment</h5>
-          <div class="mb-3">
-            <div class="alert alert-info d-flex justify-content-between align-items-center">
-              <div>
-                <strong>Grand Total (USD)</strong><br>
-                <small class="text-muted">Includes filing, official, extras, tax, and firm fees if enabled</small>
-              </div>
-              <div class="fs-4 fw-bold" id="finalGrandTotal">$0.00</div>
-            </div>
+
+
+          <div id="estimateSummary" class="mb-3">
+
+
+
+
+
           </div>
-          <ul class="small text-muted">
-            <li><strong>Click to Instruct</strong> — submits without payment (status: quoted).</li>
-            <li><strong>Click to Prepay</strong> — redirects to Stripe Checkout; after payment (status: paid).</li>
-          </ul>
+          
+
+          
+        </div>
+
+        <input type="hidden" name="quote_breakdown" id="quote_breakdown">
+              <input type="hidden" name="quote_grandtotal" id="quote_grandtotal">
+
+          
         </div>
         <div class="card-footer d-flex justify-content-between">
-          <button type="button" class="btn btn-outline-secondary btn-prev" data-prev="4">Back</button>
+          <button type="button" class="btn btn-outline-secondary btn-prev" data-prev="2">Back</button>
           <div class="d-flex gap-2">
             <button type="submit" class="btn btn-success btn-lg" id="btnInstruct">Click to Instruct</button>
             <button type="button" class="btn btn-primary btn-lg" id="btnPrepay">Click to Prepay</button>
@@ -446,23 +439,61 @@ $tfLevelEp = auth()->user()->tfLevelep->adjustment_percent ?? 0;
 <script>
 
 
- 
+ document.addEventListener("DOMContentLoaded", function() {
+  const priorityInput = document.getElementById("priority_date");
+  const deadline30 = document.getElementById("30_deadline");
+  const deadline31 = document.getElementById("31_deadline");
+
+  if (!priorityInput || !deadline30 || !deadline31) return;
+
+  priorityInput.addEventListener("change", function() {
+    const val = this.value;
+    if (!val) return;
+
+    const priorityDate = new Date(val + "T00:00:00"); // prevent timezone offset
+
+    if (isNaN(priorityDate)) return;
+
+    const addMonths = (date, months) => {
+      const d = new Date(date);
+      const day = d.getDate();
+      d.setMonth(d.getMonth() + months);
+      // Fix for month overflow (e.g., Jan 31 → Mar 2)
+      if (d.getDate() !== day) {
+        d.setDate(0);
+      }
+      return d;
+    };
+
+    const formatDate = (date) => {
+      const day = date.getDate().toString().padStart(2, "0");
+      const monthNames = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"];
+      const month = monthNames[date.getMonth()];
+      const year = date.getFullYear();
+      return `${day}-${month}-${year}`;
+    };
+
+    const deadline30Date = addMonths(priorityDate, 30);
+    const deadline31Date = addMonths(priorityDate, 31);
+
+    deadline30.value = formatDate(deadline30Date);
+    deadline31.value = formatDate(deadline31Date);
+  });
+});
+
   
 $(document).ready(function(){
 
 
-
-  $("[name='service']").change(function(){
-    var service = $(this).val();
-    if (service === "ep_validation") {
-
-    $("#translationTypeDiv").css("display", "block");
- }
-  else {
-      $("#translationTypeDiv").css("display", "none");
-      $("[name='translation']").val("none");
-  }
-  });
+ // Initialize TomSelect
+// Initialize TomSelect once
+const tomSelectInstance = new TomSelect("#translation", {
+  plugins: ['remove_button'],
+  placeholder: "Translation type",
+  searchField: ["text"],
+  create: false,
+  closeAfterSelect: true,
+});
 
 new TomSelect("#region",{
     plugins:['remove_button'],
@@ -471,6 +502,63 @@ new TomSelect("#region",{
     create: false,
     closeAfterSelect: true,
   });
+
+// Function to handle auto-selection logic
+function updateTranslationSelection() {
+  const service = $("[name='service']").val();
+
+  if (service === "ep_validation") {
+    $("#translationTypeDiv").show();
+    $(".priority, .entity").hide();
+
+    const rules = getPricingRules();
+    //tomSelectInstance.clear();
+
+    let hasValidSelection = false;
+
+    rules.forEach(rule => {
+      const val = rule.translation.trim().toLowerCase();
+      console.log('Value : '+ val);
+      if (['full', 'claims'].includes(val)) {
+        tomSelectInstance.addItem(val, true);
+        hasValidSelection = true;
+      }
+    });
+
+    // If no valid translation found → select "none"
+    if (!hasValidSelection) {
+      tomSelectInstance.addItem('none', true);
+    }
+
+  } else {
+    $("#translationTypeDiv").hide();
+    tomSelectInstance.clear();
+    $(".priority, .entity").show();
+  }
+}
+
+
+
+
+
+// Trigger when region changes
+$("#region").change(function () {
+  updateTranslationSelection();
+});
+
+// Trigger when service changes
+$("[name='service']").change(function () {
+  updateTranslationSelection();
+});
+
+
+
+
+  
+
+
+
+
 console.log($('#region').val());
 
 
@@ -489,7 +577,7 @@ console.log($('#region').val());
   }
 
   function updateProgress(step){
-    const totalSteps = 5;
+    const totalSteps = 3;
     const percentage = ((step - 1) / (totalSteps - 1)) * 100;
     $("#stepProgress").css("width", percentage + "%");
   }
@@ -622,11 +710,23 @@ function getPricingRules() {
 }
 
 
+ function numFormat(n) {
+  return n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
 
 
 
 
   function calculateEstimate(){
+
+    function generateUniqueId() {
+  const randomNumber = Math.floor(100000 + Math.random() * 900000); // 6-digit random number
+  return `EIP25-${randomNumber}`;
+}
+
+let groupId = generateUniqueId();
+//console.log(groupId); // Example: "EIP25-285746"
+
   let claims    = parseInt($("[name='claims']").val() || 0);
   let pages     = parseInt($("[name='pages']").val() || 0);
   let words     = parseInt($("[name='word_count']").val() || 0);
@@ -634,10 +734,35 @@ function getPricingRules() {
   let priority  = parseInt($("[name='priority']").val() || 0);
   let entity    = $("[name='entity']").val() || 'small' ;
   let translation = $("[name='translation']").val() || 'none';
+  let service   = $("[name='service']").val() || '' ;
+  let applicant = $("[name='applicant']").val() || '' ;
+  let title    = $("[name='title']").val() || '' ;
+  let reference_number    = $("[name='reference_number']").val() || '' ;
+  let application_number    = $("[name='application_number']").val() || '' ;
+  let priority_date    = $("[name='priority_date']").val() || '' ;
+  let filing_date    = $("[name='filing_date']").val() || '' ;
+  let deadline_30    = $("[name='30_deadline']").val() || '' ;
+  let deadline_31    = $("[name='31_deadline']").val() || '' ;
+  var firm_fee=$("#firm_fees").val() || 0;
+
+  //let groupid = randomstring(10);
+
+  const date = new Date();
+const day = String(date.getDate()).padStart(2, '0');
+const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+                    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const month = monthNames[date.getMonth()];
+const year = date.getFullYear();
+
+const formattedDate = `${day}-${month}-${year}`;
+
+//console.log(formattedDate); // Example: "28-Oct-2025"
+
 
   let rules = getPricingRules();
 
   console.log('rules : '+ rules);
+
 
   if(rules.length === 0){
     $("#estimateSummary").html(`<p class="text-danger">⚠ No pricing rule found for selected region(s).</p>`);
@@ -650,6 +775,256 @@ function getPricingRules() {
   let summaryHtml = "";
 
   let breakdown = [];
+
+
+
+let firmLogoInput = document.querySelector("[name='firm_logo']");
+let firmLogoSrc = "";
+
+if (firmLogoInput && firmLogoInput.files && firmLogoInput.files[0]) {
+  // Local uploaded file (use Object URL for preview)
+  firmLogoSrc = URL.createObjectURL(firmLogoInput.files[0]);
+} else if (firmLogoInput && firmLogoInput.value) {
+  // If already has a URL (e.g., stored path)
+  firmLogoSrc = firmLogoInput.value;
+} else {
+  // Default logo
+  firmLogoSrc = "/logo.png"; // your default Emuna IP logo path
+}
+
+
+
+
+ summaryHtml = `
+
+<style>
+/* Page styling to mimic the PDF layout */
+.estimate-header {
+  display: grid;
+  grid-template-columns: 220px 120px 1fr 220px 180px;
+  gap: 0;
+  align-items: stretch;
+  border-collapse: collapse;
+  margin-bottom: 18px;
+}
+.estimate-header > div {
+  padding: 6px 10px;
+  border: 1px solid #3d6a86;
+  background: #3d6a86;
+  color:#fff;
+  font-weight:600;
+  font-size:0.9rem;
+  text-align:center;
+}
+.estimate-header .logo {
+  background:#fff;
+  border:1px solid #3d6a86;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.estimate-header .logo img { max-height:60px; }
+
+.estimate-subheader {
+  display:grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap:0;
+  margin-bottom:18px;
+}
+.estimate-subheader .cell {
+  border:1px solid #3d6a86;
+  padding:8px 10px;
+  background:#c8dfea;
+  color:#1f3b4a;
+  font-weight:600;
+  font-size:0.9rem;
+  text-align:center;
+}
+
+.app-details {
+  width:100%;
+  border-collapse: collapse;
+  margin-bottom:20px;
+}
+.app-details td { padding:8px 10px; border:1px solid #cfdfe7; vertical-align:top; }
+.app-details .label { background:#e6f2f7; width:260px; font-weight:700; color:#1f4e63; }
+
+.fees-table {
+  width:100%;
+  border-collapse: collapse;
+  margin-bottom:14px;
+}
+.fees-table th, .fees-table td {
+  border:1px solid #54748c;
+  padding:10px 8px;
+  vertical-align:middle;
+}
+.fees-table thead th {
+  background:#54748c;
+  color:#fff;
+  font-weight:700;
+}
+.fees-table tfoot td { padding:10px; font-weight:700; background:#f1f6f8; border-top:2px solid #2d5568; }
+
+.small-note { font-size:0.85rem; color:#556b74; line-height:1.4; }
+.foot-legal { font-size:0.78rem; color:#616f74; margin-top:18px; line-height:1.35; }
+
+#quotePdf {
+  font-size: 13px;
+  font-family: 'Arial', sans-serif;
+  line-height: 1.4;
+}
+
+#quotePdf h5 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+/* Tables smaller & consistent */
+#quotePdf .fees-table th,
+#quotePdf .fees-table td,
+#quotePdf .app-details td {
+  font-size: 13px;
+  padding: 6px 5px;
+}
+
+/* Notes */
+#quotePdf .small-note, 
+#quotePdf .foot-legal {
+  font-size: 11.5px;
+}
+
+/* Hide only in PDF export */
+@media print {
+  #downloadPdf { display: none !important; }
+  #downloadExcel { display: none !important; }
+}
+@media print {
+  #quotePdf {
+    padding: 15% 15% 20% 20%; /* inner padding */
+    font-size: 11px;
+  }
+
+  /* Ensure header table fits exactly in A4 width */
+  #quotePdf table {
+    table-layout: fixed;
+    width: 100% !important;
+    border-collapse: collapse;
+  }
+
+  #quotePdf td, 
+  #quotePdf th {
+    word-wrap: break-word;
+    font-size: 11px !important;
+  }
+
+  /* Force header cells to not shrink */
+  #quotePdf .header-cell {
+    min-width: 100px;
+  }
+}
+
+
+</style>
+
+
+<!-- HEADER -->
+<table class="w-100 mb-4" style="border-collapse: collapse; table-layout: fixed; width:100%;">
+  <tr style="height:15px; width:100%; border:1px solid #54748c; background:#54748c; color:#fff;">
+    <td colspan="6"></td>
+  </tr>
+  <tr style="height: 60px;">
+    <td style="width:100px; border:1px solid #3d6a86; text-align:center; background:#fff;">
+      <img src="${firmLogoSrc}" alt="Firm Logo" style="max-height:60px; max-width:100px;">
+    </td>
+    <td style="width:100px; border:1px solid #3d6a86; background:#72627a; color:#1f3b4a; font-weight:600; text-align:center;">
+      COST ESTIMATE
+    </td>
+    <td style="width:100px; border:1px solid #3d6a86; background:#cfe6ee; text-align:center;">
+      <div style="font-weight:700; font-size:11px;">Client Name:</div>
+      <div style="font-size:11px;">${applicant}</div>
+    </td>
+    <td style="width:100px; border:1px solid #3d6a86; background:#cfe6ee; text-align:center;">
+      <div style="font-weight:700; font-size:11px;">${service.replace(/_/g, " ").toUpperCase()}</div>
+      <div style="font-size:11px;">Entry</div>
+    </td>
+    <td style="width:100px; border:1px solid #3d6a86; background:#cfe6ee; text-align:center;">
+      <div style="font-weight:700; font-size:11px;">Emuna IP Ref:</div>
+      <div style="font-size:11px;">${groupId}</div>
+    </td>
+    <td style="width:100px; border:1px solid #3d6a86; background:#cfe6ee; text-align:center;">
+      <div style="font-weight:700; font-size:11px;">Client Ref:</div>
+      <div style="font-size:11px;">${reference_number ?? 'P169375WO' }</div>
+    </td>
+  </tr>
+  <tr style="height:15px; width:100%; border:1px solid #54748c; background:#54748c; color:#fff;">
+    <td colspan="6"></td>
+  </tr>
+</table>
+
+<!-- Application Details -->
+<h5 style="color:#2d5568; font-weight:700; margin-bottom:12px;">Application Details</h5>
+<table class="app-details">
+  <tbody>
+    <tr>
+      <td class="label">Estimate Date</td><td>${formattedDate}</td>
+      <td class="label">Revised Date</td><td>-</td>
+    </tr>
+    <tr>
+      <td class="label">Application Number</td><td>${application_number}</td>
+      <td class="label">Applicant</td><td>${applicant}</td>
+    </tr>
+    <tr>
+      <td class="label">Title</td><td colspan="3">${title}</td>
+    </tr>
+    <tr>
+      <td class="label">Language</td><td>${rules.language}</td>
+      <td class="label">Pages</td><td>${pages}</td>
+    </tr>
+    <tr>
+      <td class="label">Priority Date</td><td>${priority_date}</td>
+      <td class="label">Claims</td><td>${claims}</td>
+    </tr>
+    <tr>
+      <td class="label">International Filing Date</td><td>${filing_date}</td>
+      <td class="label">Pages of Drawings</td><td>${drawings}</td>
+    </tr>
+    <tr>
+      <td class="label">30-Month Deadline</td><td>${deadline_30}</td>
+      <td class="label">31-Month Deadline</td><td>${deadline_31}</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- Filing and Translation Fees -->
+<h5 style="color:#2d5568; font-weight:700; margin:18px 0 10px;">Filing and Translation Fees</h5>
+
+<table class="fees-table">
+  <thead>
+    <tr>
+      <th style="width:22%;">Country</th>
+      <th style="width:18%;">Language</th>
+      <th style="width:18%;">Filing Fee</th>
+      <th style="width:18%;">Translation Fees**</th>
+      <th style="width:18%;">Official Fee*</th>
+      <th style="width:16%;">Total</th>
+    </tr>
+  </thead>
+  <tbody>
+`;
+
+
+
+
+// -------------------- AFTER LOOP --------------------
+
+
+
+
+
+
 
 
 
@@ -681,17 +1056,19 @@ function getPricingRules() {
 
         // Translation fee → depends on type
         let translationType = $("[name='translation']").val() || "";
-        if (translationType.toLowerCase() === "full") {
+        if (rule.translation.toLowerCase() === "full") {
             let perWord = parseFloat(rule.translation_fee || 0);
             perWord += perWord * (tfLevelEp / 100);
             translationFee = words * perWord;
-        } else if (translationType.toLowerCase() === "claims") {
+        } else if (rule.translation.toLowerCase() === "claims") {
             let perClaim = parseFloat(rule.translation_fee || 0);
             perClaim += perClaim * (tfLevelEp / 100);
             translationFee = claims * perClaim;
         } else {
             translationFee = 0; // none
         }
+        
+        //$("[name='translation']").val(rule.translation);
 
         // ✅ Official fee + extra pages logic
         let pagesExtra = 0;
@@ -713,7 +1090,7 @@ function getPricingRules() {
 else{
 
 
-    if(translation !== 'none' && words > 0){
+    if(words > 0){
       let perWord = parseFloat(rule.translation_fee || 0);
       perWord += perWord * (tfLevel/100);
       translationFee = words * perWord;
@@ -965,18 +1342,27 @@ officialFee += priorityClaimsExtra;
 
     
 
+   
+
+
 
 
     // Summary row
+
+
     summaryHtml += `
-      <div class="border rounded p-2 mb-2">
-        <strong>${rule.region}</strong><br>
-        Translation Fee: $${translationFee.toFixed(2)}<br>
-        Filing Fee: $${filingFee.toFixed(2)}<br>
-        Official Fee: $${officialFee.toFixed(2)}<br>
-        <span class="fw-bold">Total: $${rowTotal.toFixed(2)}</span>
-      </div>
-    `;
+    <tr>
+      <td>${rule.region}</td>
+      <td>${rule.language ?? (rule.translation ?? '-')}</td>
+      <td>${numFormat(filingFee)}</td>
+      <td>${translationFee > 0 ? numFormat(translationFee) : '-'}</td>
+      <td>${numFormat(officialFee ?? 0)}</td>
+      <td><strong>${numFormat(rowTotal)}</strong></td>
+    </tr>
+  `;
+  
+
+
 
     breakdown.push({
        region: rule.region,
@@ -992,11 +1378,46 @@ officialFee += priorityClaimsExtra;
       
   });
 
-  var firm_fee=$("#firm_fees").val() || 0;
+  
 grandTotal += parseFloat(firm_fee);
 
 
   // Update UI
+
+
+
+  summaryHtml += `
+  </tbody>
+  <tfoot>
+    ${firm_fee > 0 ? `
+    <tr>
+      <td colspan="5" class="text-end">Firm Fee:</td>
+      <td class="text-end">${numFormat(firm_fee)}</td>
+    </tr>` : ``}
+    <tr style="background:#f1f6f8; font-weight:bold;">
+      <td colspan="5" class="text-end">Total Estimate:</td>
+      <td class="text-end" id="finalGrandTotal">$${numFormat(grandTotal + parseFloat(firm_fee))}</td>
+    </tr>
+  </tfoot>
+</table>
+
+<div style="text-align:center; font-size:11px; color:#555; margin-top:25px;">
+  <p class="small-note mt-2">
+    <strong>*Official fees</strong> are inclusive of all government fees, exchange rate fees and other miscellaneous processing fees and disbursements. Please note that official fees are subject to change at any time by the local patent offices.
+  </p>
+
+  <div class="foot-legal">
+    Please note that the above costs have been calculated on the basis of currently available information and with the assumption that required documents will be submitted by the respective deadlines. This estimate is simply a projection of costs and makes no claim of patentability. All fees listed are USD. Please note, rush fees may apply based on when instructions are received.
+  </div>
+
+  <p class="small-note mt-3">
+    <strong>Translation fees</strong> are an approximation, and accurate fees can only be determined based on a Microsoft Word version of the English specification. When the specification is not in English, the English translation is to be provided by the client.
+    <br><small>**When filing in regions with the same language, a single translation may be used.</small>
+  </p>
+
+</div>
+`;
+  
   $("#estimateSummary").html(summaryHtml);
   $("#estimateTotal").text(`$${grandTotal.toFixed(2)}`);
   $("#finalGrandTotal").text(`$${grandTotal.toFixed(2)}`);
@@ -1008,6 +1429,9 @@ grandTotal += parseFloat(firm_fee);
 // Save grand total separately
 $("#quote_breakdown").val(JSON.stringify(breakdown));
 $("#quote_grandtotal").val(grandTotal.toFixed(2));
+
+
+
 
 }
 
@@ -1049,6 +1473,7 @@ $("#quote_grandtotal").val(grandTotal.toFixed(2));
 $(document).ready(function(){
 
   // Autofill from WIPO samples
+ /*
   $("#application_number").on("blur", function(){
     let appNo = $(this).val();
     if(!appNo) return;
@@ -1077,6 +1502,83 @@ $(document).ready(function(){
         $("#wipoStatus").text("❌ Request failed.");
     });
   });
+
+  */
+
+
+ async function fetchEpoData(appNumber) {
+  const appInput = document.getElementById('application_number');
+  const statusEl = document.getElementById('wipoStatus'); // optional div for messages
+
+  try {
+    // Show loading message
+    if (statusEl) statusEl.textContent = '🔄 Fetching data from EPO...';
+    appInput.disabled = true;
+
+    // Call your Laravel backend route
+    const url = `/epo/search?app_number=${encodeURIComponent(appNumber)}`;
+    const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+
+    if (!res.ok) throw new Error('EPO request failed via backend you have to enter data manually');
+
+    const result = await res.json();
+
+    if (!result.success || !result.data) {
+      throw new Error(result.error || 'No data found from EPO for the given application number');
+    }
+
+    const data = result.data;
+
+    // ✅ Convert YYYYMMDD → dd/mm/yyyy
+    function formatDateForPicker(dateStr) {
+      if (!dateStr || dateStr.length !== 8) return '';
+      const year = dateStr.substring(0, 4);
+      const month = dateStr.substring(4, 6);
+      const day = dateStr.substring(6, 8);
+      return `${year}-${month}-${day}`;
+
+      console.log('Formatted date:', formatted);
+      //return formatted;
+    }
+
+    // ✅ Fill form fields
+    document.getElementById('title').value = data.title || '';
+    document.getElementById('applicant').value = data.applicant || '';
+    //document.getElementById('filing_date').value = formatDateForPicker(data.filing_date);
+    //document.getElementById('priority_date').value = formatDateForPicker(data.priority_date);
+    document.getElementById('claims').value = data.claims_count || '';
+    document.getElementById('pages').value = data.pages_count || '';
+    document.getElementById('word_count').value = data.word_count || '';
+    document.getElementById('drawings').value = data.drawing_pages || '';
+    //document.getElementById('drawing_pages').value = data.drawing_pages || '';
+
+
+
+
+    // ✅ Success feedback
+    if (statusEl) {
+      statusEl.textContent = '✅ EPO data fetched successfully!';
+      statusEl.style.color = 'green';
+    }
+
+    console.log('EPO Data Loaded:', data);
+  } catch (err) {
+    console.error('EPO fetch error:', err);
+    if (statusEl) {
+      statusEl.textContent = `❌ ${err.message}`;
+      statusEl.style.color = 'red';
+    }
+  } finally {
+    appInput.disabled = false;
+  }
+}
+
+// 🔹 Run on blur of application number field
+document.getElementById('application_number').addEventListener('blur', (e) => {
+  const appNum = e.target.value.trim();
+  if (appNum) fetchEpoData(appNum);
+});
+
 
 });
 </script>

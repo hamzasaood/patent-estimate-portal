@@ -77,12 +77,12 @@
   margin-bottom:14px;
 }
 .fees-table th, .fees-table td {
-  border:1px solid #2d5568;
+  border:1px solid #54748c;
   padding:10px 8px;
   vertical-align:middle;
 }
 .fees-table thead th {
-  background:#2d5568;
+  background:#54748c;
   color:#fff;
   font-weight:700;
 }
@@ -164,18 +164,26 @@
   {{-- Fancy top header similar to PDF --}}
   {{-- Fancy top header similar to PDF --}}
 <table class="w-100 mb-4" style="border-collapse: collapse; table-layout: fixed; width:100%;">
-  <tr>
+  <tr style="height:15px; width:100%; border:1px solid #54748c; background:#54748c; color:#fff;">
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+</tr>
+  <tr style="height: 60px;">
     <!-- Logo -->
     <td style="width:100px; border:1px solid #3d6a86; text-align:center; background:#fff; vertical-align:middle;">
       @if($q0->firm_logo)
-        <img src="{{ asset($q0->firm_logo) }}" alt="logo" style="max-height:50px; max-width:90px;">
+        <img src="{{ asset($q0->firm_logo) }}" alt="logo" style="max-height:60px; max-width:100px;">
       @else
-        <img src="{{ asset('/logo.png') }}" alt="Emuna IP Logo" style="max-height:50px; max-width:90px;">
+        <img src="{{ asset('/logo.png') }}" alt="Emuna IP Logo" style="max-height:60px; max-width:100px;">
       @endif
     </td>
 
     <!-- Cost Estimate -->
-    <td style="width:100px; border:1px solid #3d6a86; background:#8ea9bb; color:#1f3b4a; font-weight:600; text-align:center; vertical-align:middle; font-size:12px;">
+    <td style="width:100px; border:1px solid #3d6a86; background:#72627a; color:#1f3b4a; font-weight:600; text-align:center; vertical-align:middle; font-size:12px;">
       COST ESTIMATE
     </td>
 
@@ -187,7 +195,7 @@
 
     <!-- Service -->
     <td style="width:100px; border:1px solid #3d6a86; background:#cfe6ee; color:#113842; text-align:center; vertical-align:middle;">
-      <div style="font-weight:700; font-size:11px;">{{ ucfirst(str_replace('_',' ',$q0->service ?? 'PCT National Phase')) }}</div>
+      <div style="font-weight:700; font-size:11px;">{{ strtoupper(str_replace('_', ' ', $q0->service ?? 'PCT National Phase')) }}</div>
       <div style="font-size:11px;">Entry</div>
     </td>
 
@@ -203,6 +211,14 @@
       <div style="font-size:11px;">{{ $q0->reference_number ?? 'P169375WO' }}</div>
     </td>
   </tr>
+  <tr style="height:15px; width:100%; border:1px solid #54748c; background:#54748c; color:#fff;">
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+</tr>
 </table>
 
 
